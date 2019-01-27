@@ -15,12 +15,15 @@ import org.lwjgl.opengl.GL11;
  * @author Pavla
  */
 public abstract class Model {
-   List<Point> pointsList= new ArrayList<Point>(); 
-   
+   public List<Point> pointsList= new ArrayList<Point>();
+   public List<Point> pointsListNormalised= new ArrayList<Point>(); 
+   public List<Point> pointsListScaled= new ArrayList<Point>();
+   public List<Point> pointsListRounded= new ArrayList<Point>();
+   float minX, minY, minZ, maxX, maxY, maxZ;
    public void drawPoints(){
        GL11.glColor3f(0.098f, 0.098f, 0.44f);
        GL11.glBegin(GL11.GL_POINTS);
-       for (Point point : pointsList) {
+       for (Point point : pointsListRounded) {
             GL11.glVertex3f(point.getCoords().getX(), point.getCoords().getY(), point.getCoords().getZ());
        }
        GL11.glEnd();

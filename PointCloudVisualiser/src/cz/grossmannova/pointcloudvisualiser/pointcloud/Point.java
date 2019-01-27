@@ -17,11 +17,19 @@ public class Point {
 
     public Point() {
     }
+    public Point(Vector3f coords) {
+        this.coords=coords;
+    }
 
     public Point(String input) {
         String[] split = input.split(";");
         coords.set(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
-this.toString();
+       //coords.scale(1000); //kvůli souboru bunny.txt
+//this.toString();
+    }
+    public Point(float x, float y, float z){
+        coords.set(x,y,z);
+       
     }
 
     @Override
@@ -33,7 +41,9 @@ this.toString();
         return coords;
     }
 
-  
+  public Vector3f getRoundedCoords(){
+      return new Vector3f(Math.round(coords.getX()), Math.round(coords.getY()), Math.round(coords.getZ()));
+  }
     
 
 }
