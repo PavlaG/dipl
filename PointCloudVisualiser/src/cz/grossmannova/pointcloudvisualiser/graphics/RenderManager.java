@@ -6,11 +6,18 @@
 package cz.grossmannova.pointcloudvisualiser.graphics;
 
 import cz.grossmannova.pointcloudvisualiser.models.Model;
+import cz.grossmannova.pointcloudvisualiser.utils.ByteUtils;
 import java.awt.Canvas;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -25,6 +32,9 @@ import org.lwjgl.util.glu.Sphere;
  * @author Pavla
  */
 public class RenderManager {
+
+    public final int width = 1040;
+    public final int height = 800;
 
     private float ambientColor[] = {0, 0, 0, 1.0f};
 
@@ -42,7 +52,7 @@ public class RenderManager {
     public void createDisplay(Canvas canvas) {
         try {
             Display.setParent(canvas);
-            Display.setDisplayMode(new DisplayMode(1040, 800));
+            Display.setDisplayMode(new DisplayMode(width, height));
             Display.setTitle("App");
             Display.create();
         } catch (LWJGLException ex) {
@@ -53,7 +63,7 @@ public class RenderManager {
     public void inicialization() {
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GLU.gluPerspective(70f, 1040 / (float) 800, 0.1f, 800);
+        GLU.gluPerspective(70f, width / (float) height, 0.1f, height);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
         GL11.glClearColor(1, 1, 1, 0);
@@ -158,6 +168,32 @@ public class RenderManager {
 
     public void cleanUp() {
         Display.destroy();
+    }
+
+    public void doScreenshot() {
+        ByteBuffer pixels = BufferUtils.createByteBuffer(width * height * 3);
+        GL11.glReadPixels(0, 0, width, height, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
+        BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        byte[] array = new byte[width * height * 3];
+        pixels.get(array);
+        int[] intArray = new int[width * height];
+        int i = 0;
+        int j = 0;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                i = x + width * y;
+                j = x + width * (height - y - 1);
+                intArray[j] = ByteUtils.colorByteToInt(array[i * 3], array[i * 3 + 1], array[i * 3 + 2]);
+            }
+
+        }
+        bufImg.setRGB(0, 0, width, height, intArray, 0, width);
+        try {
+            ImageIO.write(bufImg, "PNG", new File("abcde.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(RenderManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
 }

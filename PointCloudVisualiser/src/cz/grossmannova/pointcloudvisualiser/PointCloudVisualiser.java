@@ -32,6 +32,7 @@ public class PointCloudVisualiser {
     private boolean guiRequestedClose = false;
     private long lastFrame;
     private int delta;
+    private boolean doScreenshot = false;
 
     public static void main(String[] args) {
 
@@ -89,6 +90,10 @@ public class PointCloudVisualiser {
             camera.input(delta);
             renderManager.render(camera, models);
             renderManager.testError();
+            if (doScreenshot) {
+                renderManager.doScreenshot();
+                doScreenshot = false;
+            }
             Display.update();
             Display.sync(60);
         }
@@ -117,4 +122,13 @@ public class PointCloudVisualiser {
     public void sendModelToDraw(Model model) {
         models.add(model);
     }
+
+    public boolean isDoScreenshot() {
+        return doScreenshot;
+    }
+
+    public void setDoScreenshot(boolean doScreenshot) {
+        this.doScreenshot = doScreenshot;
+    }
+    
 }
