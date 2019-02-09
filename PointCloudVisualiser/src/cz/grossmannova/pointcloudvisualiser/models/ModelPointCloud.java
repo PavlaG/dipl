@@ -5,8 +5,11 @@
  */
 package cz.grossmannova.pointcloudvisualiser.models;
 
+import cz.grossmannova.pointcloudvisualiser.pointcloud.MarchingCubes;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.Point;
+import java.util.ArrayList;
 import java.util.List;
+import org.lwjgl.util.vector.Vector3f;
 
 public class ModelPointCloud extends Model {
 
@@ -15,6 +18,7 @@ public class ModelPointCloud extends Model {
         normalise();
         scale();
         round();
+        createPointListForTriangles();
     }
 
     private void normalise() {
@@ -59,7 +63,7 @@ public class ModelPointCloud extends Model {
 
     private void scale() {
         //pak se bude zadávat uživatelem, teď natvrdo:
-        int scale = 40;
+        int scale = 20;
         for (Point point : pointsListNormalised) {
             pointsListScaled.add(new Point(
                     point.getCoords().getX() * scale,
@@ -71,7 +75,7 @@ public class ModelPointCloud extends Model {
 
     private void round() {
         boolean containsFlag = false;
-       // Point p=new Point();
+        // Point p=new Point();
         for (Point point : pointsListScaled) {
             for (Point pointRound : pointsListRounded) {
                 if (pointRound.getCoords().equals(point.getRoundedCoords())) {
@@ -86,8 +90,74 @@ public class ModelPointCloud extends Model {
                 containsFlag = false;
             }
         }
-        System.out.println("rounded amount of points:"+ pointsListRounded.size());
-        System.out.println("previous amount of points:"+ pointsList.size());
+        System.out.println("rounded amount of points:" + pointsListRounded.size());
+        System.out.println("previous amount of points:" + pointsList.size());
+    }
+
+    private Vector3f moveCornerOfObjectToCoords000() {
+        maxX=minX = pointsListRounded.get(0).getCoords().getX();
+        maxY=minY = pointsListRounded.get(0).getCoords().getY();
+       maxZ=minZ = pointsListRounded.get(0).getCoords().getZ();
+        for (Point point : pointsListRounded) {
+            if (point.getCoords().getX() < minX) {
+                minX = point.getCoords().getX();
+            }
+            if (point.getCoords().getY() < minY) {
+                minY = point.getCoords().getY();
+            }
+            if (point.getCoords().getZ() < minZ) {
+                minZ = point.getCoords().getZ();
+            }
+                  if (point.getCoords().getX() > maxX) {
+                maxX = point.getCoords().getX();
+            }
+            if (point.getCoords().getY() > maxY) {
+                maxY = point.getCoords().getY();
+            }
+            if (point.getCoords().getZ() > maxZ) {
+                maxZ = point.getCoords().getZ();
+            }
+
+        }
+       // System.out.println(" v2: minX=" + minX + " maxX=" + maxX + " minY=" + minY + " maxY=" + maxY + " minZ=" + minZ + " maxZ=" + maxZ);
+  
+        for (Point point : pointsListRounded) {
+            point.getCoords().set(point.getCoords().getX() - minX, point.getCoords().getY() - minY, point.getCoords().getZ() - minZ);
+        }
+        return new Vector3f(Math.abs(minX-maxX), Math.abs(maxY - minY), Math.abs(maxZ - minZ));
+    }
+
+    private void createPointListForTriangles() { //vezme zaokrouhlené body a v listu triangles z nich udělá seznam tak, jak jdou po sobě pro vykreslení
+
+      //  ArrayList<Vector3f> triangles = new ArrayList<Vector3f>();
+        Vector3f objectDimensions=moveCornerOfObjectToCoords000(); //roh obalu objektu se posune do souřadnic 0,0,0
+        //int xSize = 3, zSize = 2, ySize = 2; //tohle se zjistí z pointListu, který se nejpreve přesune rohem do 000      
+        Point[][][] pointsGrid = new Point[(int)objectDimensions.getZ()][(int)objectDimensions.getY()][(int)objectDimensions.getX()];
+        for (int z = 0; z < (int)objectDimensions.getZ(); z++) {
+            for (int y = 0; y < (int)objectDimensions.getY(); y++) {
+                for (int x = 0; x < (int)objectDimensions.getX(); x++) {
+                    for (Point point : pointsListRounded) {
+                        if (point.getCoords().getX() == x && point.getCoords().getY() == y && point.getCoords().z == z) {
+                            pointsGrid[z][y][x] = point;
+                            break;
+                        }
+                        pointsGrid[z][y][x] = new Point(x, y, z);
+                        pointsGrid[z][y][x].setExists(false);
+                    }
+                }
+            }
+        }
+        for (int z = 0; z < (int)objectDimensions.getZ() - 1; z++) {
+            for (int y = 0; y < (int)objectDimensions.getY() - 1; y++) {
+                for (int x = 0; x < (int)objectDimensions.getX() - 1; x++) {
+                    MarchingCubes.polygonise(pointsGrid, x, y, z, triangles);
+                }
+            }
+        }
+//        System.out.println("size: "+triangles.size());
+//        for (Vector3f triangle : triangles) {
+//            System.out.println(triangle.getX());
+//        }
     }
 
 }

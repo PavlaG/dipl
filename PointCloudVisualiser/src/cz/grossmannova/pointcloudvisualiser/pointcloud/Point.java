@@ -14,7 +14,15 @@ import org.lwjgl.util.vector.Vector3f;
 public class Point {
 
     private Vector3f coords = new Vector3f();
+private boolean exists=true;
 
+    public boolean isExists() {
+        return exists;
+    }
+
+    public void setExists(boolean exists) {
+        this.exists = exists;
+    }
     public Point() {
     }
     public Point(Vector3f coords) {
