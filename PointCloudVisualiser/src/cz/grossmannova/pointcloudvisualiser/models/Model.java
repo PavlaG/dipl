@@ -21,7 +21,8 @@ public abstract class Model {
    public List<Point> pointsListScaled= new ArrayList<Point>();
    public List<Point> pointsListRounded= new ArrayList<Point>();
    ArrayList<Vector3f> triangles = new ArrayList<Vector3f>();
-   float minX, minY, minZ, maxX, maxY, maxZ;
+   float minX, minY, minZ, maxX, maxY, maxZ; //není stále aktuální, dobře je po zavolání fce moveCornerOfObjectToCoords000()
+   Vector3f objectDimensions;
    public void drawPoints(){
        GL11.glColor3f(0.098f, 0.098f, 0.44f);
        //GL11.glBegin(GL11.GL_POINTS);

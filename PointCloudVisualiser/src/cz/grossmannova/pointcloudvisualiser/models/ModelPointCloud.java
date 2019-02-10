@@ -18,7 +18,9 @@ public class ModelPointCloud extends Model {
         normalise();
         scale();
         round();
-        createPointListForTriangles();
+        moveCornerOfObjectToCoords000(); //posune roh obalu objektu do 000
+        createPointListForTriangles(); //této metodě musí těsně předcházet moveCornerOfObjectToCoords000(), protože v ní se spočte min, max pro x,y,z, s těmito hodnotami se zde pak počítá
+        createSetOfContours();
     }
 
     private void normalise() {
@@ -95,9 +97,9 @@ public class ModelPointCloud extends Model {
     }
 
     private Vector3f moveCornerOfObjectToCoords000() {
-        maxX=minX = pointsListRounded.get(0).getCoords().getX();
-        maxY=minY = pointsListRounded.get(0).getCoords().getY();
-       maxZ=minZ = pointsListRounded.get(0).getCoords().getZ();
+        maxX = minX = pointsListRounded.get(0).getCoords().getX();
+        maxY = minY = pointsListRounded.get(0).getCoords().getY();
+        maxZ = minZ = pointsListRounded.get(0).getCoords().getZ();
         for (Point point : pointsListRounded) {
             if (point.getCoords().getX() < minX) {
                 minX = point.getCoords().getX();
@@ -108,7 +110,7 @@ public class ModelPointCloud extends Model {
             if (point.getCoords().getZ() < minZ) {
                 minZ = point.getCoords().getZ();
             }
-                  if (point.getCoords().getX() > maxX) {
+            if (point.getCoords().getX() > maxX) {
                 maxX = point.getCoords().getX();
             }
             if (point.getCoords().getY() > maxY) {
@@ -119,23 +121,42 @@ public class ModelPointCloud extends Model {
             }
 
         }
-       // System.out.println(" v2: minX=" + minX + " maxX=" + maxX + " minY=" + minY + " maxY=" + maxY + " minZ=" + minZ + " maxZ=" + maxZ);
-  
+        // System.out.println(" v2: minX=" + minX + " maxX=" + maxX + " minY=" + minY + " maxY=" + maxY + " minZ=" + minZ + " maxZ=" + maxZ);
+
         for (Point point : pointsListRounded) {
             point.getCoords().set(point.getCoords().getX() - minX, point.getCoords().getY() - minY, point.getCoords().getZ() - minZ);
         }
-        return new Vector3f(Math.abs(minX-maxX), Math.abs(maxY - minY), Math.abs(maxZ - minZ));
+        maxX = maxX - minX; //tady nastavuju globální hodnoty pro max, min, abych to dál nemusela znovu počítat.
+        maxY = maxY - minY; //nejdřív se musí nastavit max, než se vynuluje min
+        maxZ = maxZ - minZ;
+        minX = minZ = minY = 0;
+
+        return new Vector3f(Math.abs(minX - maxX), Math.abs(maxY - minY), Math.abs(maxZ - minZ));
     }
 
     private void createPointListForTriangles() { //vezme zaokrouhlené body a v listu triangles z nich udělá seznam tak, jak jdou po sobě pro vykreslení
+        objectDimensions = new Vector3f(Math.abs(minX - maxX), Math.abs(maxY - minY), Math.abs(maxZ - minZ));
+        Point[][][] pointsGrid = transformPointsToPoinsGrid();
+        for (int z = 0; z < (int) objectDimensions.getZ() - 1; z++) {
+            for (int y = 0; y < (int) objectDimensions.getY() - 1; y++) {
+                for (int x = 0; x < (int) objectDimensions.getX() - 1; x++) {
+                    MarchingCubes.polygonise(pointsGrid, x, y, z, triangles);
+                }
+            }
+        }
+//        System.out.println("size: "+triangles.size());
+//        for (Vector3f triangle : triangles) {
+//            System.out.println(triangle.getX());
+//        }
+    }
 
-      //  ArrayList<Vector3f> triangles = new ArrayList<Vector3f>();
-        Vector3f objectDimensions=moveCornerOfObjectToCoords000(); //roh obalu objektu se posune do souřadnic 0,0,0
+    private Point[][][] transformPointsToPoinsGrid() {
+        objectDimensions = new Vector3f(Math.abs(minX - maxX), Math.abs(maxY - minY), Math.abs(maxZ - minZ));
         //int xSize = 3, zSize = 2, ySize = 2; //tohle se zjistí z pointListu, který se nejpreve přesune rohem do 000      
-        Point[][][] pointsGrid = new Point[(int)objectDimensions.getZ()][(int)objectDimensions.getY()][(int)objectDimensions.getX()];
-        for (int z = 0; z < (int)objectDimensions.getZ(); z++) {
-            for (int y = 0; y < (int)objectDimensions.getY(); y++) {
-                for (int x = 0; x < (int)objectDimensions.getX(); x++) {
+        Point[][][] pointsGrid = new Point[(int) objectDimensions.getZ()][(int) objectDimensions.getY()][(int) objectDimensions.getX()];
+        for (int z = 0; z < (int) objectDimensions.getZ(); z++) {
+            for (int y = 0; y < (int) objectDimensions.getY(); y++) {
+                for (int x = 0; x < (int) objectDimensions.getX(); x++) {
                     for (Point point : pointsListRounded) {
                         if (point.getCoords().getX() == x && point.getCoords().getY() == y && point.getCoords().z == z) {
                             pointsGrid[z][y][x] = point;
@@ -147,17 +168,42 @@ public class ModelPointCloud extends Model {
                 }
             }
         }
-        for (int z = 0; z < (int)objectDimensions.getZ() - 1; z++) {
-            for (int y = 0; y < (int)objectDimensions.getY() - 1; y++) {
-                for (int x = 0; x < (int)objectDimensions.getX() - 1; x++) {
-                    MarchingCubes.polygonise(pointsGrid, x, y, z, triangles);
+        return pointsGrid;
+    }
+
+    private void createSetOfContours() {
+        ArrayList<ArrayList<ArrayList<Point>>> contours = new ArrayList<ArrayList<ArrayList<Point>>>();
+        int indexOfContourInCurrentSlice = 0;
+        Point currentPoint = new Point();
+        boolean currentPointFound = false;
+        Point[][][] pointsGrid = transformPointsToPoinsGrid();
+        for (int y = 0; y < pointsGrid[0].length; y++) { //teď by minY mělo být 0; další možností je nebrat min max ale vycházet z toho, že data jsou normalizovaná a pak vynásobená nějakou škálou (zvážit jestli to takto nepoměnit!!)
+            contours.add(new ArrayList<ArrayList<Point>>());
+            for (int x = 0; x < pointsGrid[0][0].length; x++) {
+                for (int z = 0; z < pointsGrid.length; z++) {
+                    if (pointsGrid[z][y][x].isExists() == true && pointsGrid[z][y][x].isVisited() == false) {
+                        currentPoint = pointsGrid[z][y][x];
+                        currentPointFound = true;
+                        break;
+                    }
+                }
+                if (currentPointFound == true) {
+                    break;
                 }
             }
+            if (currentPointFound == true) {
+                contours.get(contours.size() - 1).add(new ArrayList<Point>());
+                currentPoint.setVisited(true);
+                contours.get(contours.size() - 1).get(indexOfContourInCurrentSlice).add(currentPoint);
+
+                //pro každý bod v daném y spočtu jeho vzdálenost od currentPoint, vyberu ten s nejmenší (max vzdálenost bude omezena) a ten přidám do seznamu a označím jako Visited
+                //opakuju dokud neprojdu všechny
+                // Pak zkusám, jestli je ještě nějaký bod nenavštívený a kdyžtak z něj udělám další konturu.
+                indexOfContourInCurrentSlice++;
+            } else {
+                System.out.println("neexistuje kontura pro danou úroveň y."); //to se pak musí ještě pořešit
+            }
         }
-//        System.out.println("size: "+triangles.size());
-//        for (Vector3f triangle : triangles) {
-//            System.out.println(triangle.getX());
-//        }
     }
 
 }
