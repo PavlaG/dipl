@@ -31,6 +31,11 @@ public class Point {
     public Point(Vector3f coords) {
         this.coords = coords;
     }
+    public Point(Point p){
+        coords.set(p.getCoords());
+        exists=p.isExists();
+        visited=p.isVisited();
+    }
 
     public Point(String input) {
         String[] split = input.split(";");
