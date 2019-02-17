@@ -28,8 +28,8 @@ public abstract class Model {
     Vector3f objectDimensions;
 
     public void drawPoints() {
-        GL11.glColor3f(0.098f, 0.098f, 0.44f);
-        //GL11.glBegin(GL11.GL_POINTS);
+//        GL11.glColor3f(0.098f, 0.098f, 0.44f);
+//        GL11.glBegin(GL11.GL_POINTS);
 //       for (Point point : pointsListRounded) {
 //            GL11.glVertex3f(point.getCoords().getX(), point.getCoords().getY(), point.getCoords().getZ());
 //       }
@@ -41,16 +41,24 @@ public abstract class Model {
 //           GL11.glVertex3f(point.getX(), point.getY(), point.getZ());
 //       }
 //       GL11.glEnd();
-        for (ArrayList<ArrayList<Point>> arrayList : pointsAccordingToCountoursForEachLevel) {
+       
+
+        GL11.glColor3f(1f, 0.0f, 0.0f);
+
+
+for (ArrayList<ArrayList<Point>> arrayList : pointsAccordingToCountoursForEachLevel) {
             for (ArrayList<Point> contour : arrayList) {
-                GL11.glBegin(GL11.GL_LINES);
+                GL11.glBegin(GL11.GL_LINE_STRIP);
+                 //               GL11.glBegin(GL11.GL_POINTS);
+
                 for (Point point : contour) {
                     
                     GL11.glVertex3f(point.getCoords().getX(), point.getCoords().getY(), point.getCoords().getZ());
                 }
+              //  GL11.glVertex3f(contour.get(0).getCoords().getX(), contour.get(0).getCoords().getY(), contour.get(0).getCoords().getZ());
                 GL11.glEnd();
 
-            }
+           }
         }
 
     }

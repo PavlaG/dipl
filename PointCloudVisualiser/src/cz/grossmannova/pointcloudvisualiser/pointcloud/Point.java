@@ -5,6 +5,7 @@
  */
 package cz.grossmannova.pointcloudvisualiser.pointcloud;
 
+import java.util.Objects;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
@@ -68,6 +69,28 @@ public class Point {
 
     public void setVisited(boolean visited) {
         this.visited = visited;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.coords);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Point other = (Point) obj;
+        return Objects.equals(this.coords, other.coords);
     }
 
 }

@@ -17,9 +17,10 @@ public class ModelPointCloud extends Model {
         this.pointsList = pointsList;
         normalise();
         scale();
-        round();
+        //round(); //tahle metoda zaokrouhlí souřadnice a posune body do mřížky, prozatím ji nahradím následujícím řádkem
+        pointsListRounded = pointsListScaled;
         moveCornerOfObjectToCoords000(); //posune roh obalu objektu do 000
-        createPointListForTriangles(); //této metodě musí těsně předcházet moveCornerOfObjectToCoords000(), protože v ní se spočte min, max pro x,y,z, s těmito hodnotami se zde pak počítá
+        //createPointListForTriangles(); //této metodě musí těsně předcházet moveCornerOfObjectToCoords000(), protože v ní se spočte min, max pro x,y,z, s těmito hodnotami se zde pak počítá
         createSetOfContoursNew();
     }
 
@@ -65,7 +66,7 @@ public class ModelPointCloud extends Model {
 
     private void scale() {
         //pak se bude zadávat uživatelem, teď natvrdo:
-        int scale = 20;
+        int scale = 60;
         for (Point point : pointsListNormalised) {
             pointsListScaled.add(new Point(
                     point.getCoords().getX() * scale,
@@ -175,6 +176,10 @@ public class ModelPointCloud extends Model {
         return (float) Math.sqrt(Math.pow(p1.getCoords().getX() - p2.getCoords().getX(), 2) + Math.pow(p1.getCoords().getY() - p2.getCoords().getY(), 2) + Math.pow(p1.getCoords().getZ() - p2.getCoords().getZ(), 2));
     }
 
+    private float countDistanceBetween2PointsIn2D(Point p1, Point p2) {
+        return (float) Math.sqrt(Math.pow(p1.getCoords().getX() - p2.getCoords().getX(), 2) + Math.pow(p1.getCoords().getZ() - p2.getCoords().getZ(), 2));
+    }
+
     private void createSetOfContoursNew() {
         Point currentPoint;
         float distanceFromCurrentPoint;
@@ -183,7 +188,9 @@ public class ModelPointCloud extends Model {
         Point nearestPointToCurrentPoint = new Point();
         boolean nearestPointSet = false;
         boolean doNextRound = true;
+        float distanceLimit = 18; //tohle se pak bude někde uživatelsky nastavovat?
         ArrayList<ArrayList<Point>> pointsAccordintToLevels = new ArrayList<>(); //vytvoření hlavního seznamu, který bude obsahovat seznamy bodů pro danou hodnotu y
+        Point firstPointInContour;
         for (int y = 0; y <= maxY; y++) {
             pointsAccordintToLevels.add(new ArrayList<>()); //
             pointsAccordingToCountoursForEachLevel.add(new ArrayList<ArrayList<Point>>());
@@ -200,34 +207,64 @@ public class ModelPointCloud extends Model {
             currentIndexForContourInSpecifiedLevel = -1;
             //currentPoint = thereIsStillUnvisitedPoint();
             while ((currentPoint = thereIsStillUnvisitedPoint(listForLevel)) != null) {
-                System.out.println("in first while");
                 pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).add(new ArrayList<Point>());
                 currentIndexForContourInSpecifiedLevel++;
                 currentPoint.setVisited(true);
                 pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).add(new Point(currentPoint));
+                doNextRound = true;
+
                 while (doNextRound) {
-                    //   System.out.println("in while");
+                    int i = 0;
+                  // i++;  //nějak vyřešit ten druhý bod, že by neměl brát v úvadu vzdálenost k prvnímu v kontuře
+                    minDistanceFromCurrentPoint = Float.MAX_VALUE;
                     for (Point point : listForLevel) {
-                        if (!point.equals(currentPoint) && point.isVisited() == false) {
-                            distanceFromCurrentPoint = countDistanceBetween2Points(currentPoint, point);
-                            if (distanceFromCurrentPoint < minDistanceFromCurrentPoint) {
-                                minDistanceFromCurrentPoint = distanceFromCurrentPoint;
-                                nearestPointToCurrentPoint = point;
-                                nearestPointSet = true;
+                        System.out.println("i:"+ i);
+                        if (i != 1) {
+                            if (!point.equals(currentPoint) && (point.isVisited() == false || point.equals(pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).get(0)))) {
+                               // i++;
+                                distanceFromCurrentPoint = countDistanceBetween2PointsIn2D(currentPoint, point);
+                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint //&& distanceFromCurrentPoint < distanceLimit
+                                        ) {
+                                    minDistanceFromCurrentPoint = distanceFromCurrentPoint;
+                                    nearestPointToCurrentPoint = point;
+                                    nearestPointSet = true;
+                                }
+                            }
+                        } else if (i == 1) {
+                            if (!point.equals(currentPoint) && point.isVisited() == false) {
+                                //i++;
+                                distanceFromCurrentPoint = countDistanceBetween2PointsIn2D(currentPoint, point);
+                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint //&& distanceFromCurrentPoint < distanceLimit
+                                        ) {
+                                    minDistanceFromCurrentPoint = distanceFromCurrentPoint;
+                                    nearestPointToCurrentPoint = point;
+                                    nearestPointSet = true;
+                                }
                             }
                         }
+
                     }
                     if (nearestPointSet) {
-                        nearestPointToCurrentPoint.setVisited(true);
-                        pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).add(new Point(nearestPointToCurrentPoint));
-
-                        nearestPointSet = false;
-                        doNextRound = true;
-
+                       i++;
+                        if (nearestPointToCurrentPoint.equals(pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).get(0))) {
+                            doNextRound = false;
+                            nearestPointSet = false;
+                            System.out.println("nearest is first");
+                            nearestPointToCurrentPoint = new Point();
+                        } else {
+                            nearestPointToCurrentPoint.setVisited(true);
+                            pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).add(new Point(nearestPointToCurrentPoint));
+//i++;
+                            nearestPointSet = false;
+                            doNextRound = true;
+                            currentPoint = nearestPointToCurrentPoint;
+                        }
+                        //currentPoint = nearestPointToCurrentPoint;
                     } else {
                         doNextRound = false;
                         nearestPointSet = false;
                         System.out.println("set doNextRound to false");
+                        nearestPointToCurrentPoint = new Point();
                     }
                 }
 
