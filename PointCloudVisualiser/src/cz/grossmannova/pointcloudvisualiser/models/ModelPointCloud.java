@@ -28,8 +28,6 @@ public class ModelPointCloud extends Model {
         //createSetOfContoursNew();
 
         //fillModelWithCubes();
-        //findDuplicatedPoints();
-        // testPrintIntersectsIndexes();
         super.pointsList = pointsListRounded;
     }
 
@@ -51,7 +49,7 @@ public class ModelPointCloud extends Model {
         } else {
             GL11.glCallList(listId);
         }
-        
+
         GL11.glEnable(GL11.GL_LIGHTING);
     }
 
@@ -88,9 +86,9 @@ public class ModelPointCloud extends Model {
         float maxDiff = selectMax(xDiff, yDiff, zDiff);
 
         for (Point point : pointsList) {
-            float newX = (point.getCoords().getX() - minX) / maxDiff;//xDiff;
-            float newY = (point.getCoords().getY() - minY) / maxDiff;//yDiff;
-            float newZ = (point.getCoords().getZ() - minZ) / maxDiff;//zDiff;
+            float newX = (point.getCoords().getX() - minX) / maxDiff;
+            float newY = (point.getCoords().getY() - minY) / maxDiff;
+            float newZ = (point.getCoords().getZ() - minZ) / maxDiff;
             pointsListNormalised.add(new Point(newX, newY, newZ));
         }
 
@@ -111,11 +109,9 @@ public class ModelPointCloud extends Model {
 
     private void round() {
         boolean containsFlag = false;
-        // Point p=new Point();
         for (Point point : pointsListScaled) {
             for (Point pointRound : pointsListRounded) {
                 if (pointRound.getCoords().equals(point.getRoundedCoords())) {
-                    //System.out.println("aaa");
                     containsFlag = true;
                     break;
                 };
@@ -155,8 +151,6 @@ public class ModelPointCloud extends Model {
             }
 
         }
-        // System.out.println(" v2: minX=" + minX + " maxX=" + maxX + " minY=" + minY + " maxY=" + maxY + " minZ=" + minZ + " maxZ=" + maxZ);
-
         for (Point point : pointsListRounded) {
             point.getCoords().set(point.getCoords().getX() - minX, point.getCoords().getY() - minY, point.getCoords().getZ() - minZ);
         }
@@ -211,288 +205,10 @@ public class ModelPointCloud extends Model {
         return (float) Math.sqrt(Math.pow(p1.getCoords().getX() - p2.getCoords().getX(), 2) + Math.pow(p1.getCoords().getZ() - p2.getCoords().getZ(), 2));
     }
 
-//    private void createSetOfContoursNew() {
-//        Point currentPoint;
-//        float distanceFromCurrentPoint;
-//        int currentIndexForContourInSpecifiedLevel = -1;
-//        float minDistanceFromCurrentPoint = Float.MAX_VALUE;
-//        Point nearestPointToCurrentPoint = new Point();
-//        boolean nearestPointSet = false;
-//        boolean doNextRound = true;
-//        float distanceLimit = 18; //tohle se pak bude někde uživatelsky nastavovat?
-//        ArrayList<ArrayList<Point>> pointsAccordintToLevels = new ArrayList<>(); //vytvoření hlavního seznamu, který bude obsahovat seznamy bodů pro danou hodnotu y
-//        Point firstPointInContour;
-//        for (int y = 0; y <= maxY; y++) {
-//            pointsAccordintToLevels.add(new ArrayList<>()); //
-//            pointsAccordingToCountoursForEachLevel.add(new ArrayList<ArrayList<Point>>());
-//        }
-//        for (Point point : pointsListRounded) { //rozdělím body do seznamů podle hodnoty y
-//            pointsAccordintToLevels.get((int) point.getCoords().getY()).add(point);
-//        }
-//
-//        for (ArrayList<Point> listForLevel : pointsAccordintToLevels) { //prvotní cyklus přes všechny levely
-//            if (listForLevel.isEmpty()) { //ověřit, že to pak nidke nespadne, když level opravdu nebude nic obsahovat!!!
-//                System.out.println("level neobsahuje žádné body");
-//                continue;
-//            }
-////            if (pointsAccordintToLevels.indexOf(listForLevel) != 5) {
-////                continue; //podmínka pro testování
-////            }
-//            currentIndexForContourInSpecifiedLevel = -1;
-//            while ((currentPoint = thereIsStillUnvisitedPoint(listForLevel)) != null) {
-//                pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).add(new ArrayList<Point>());
-//                currentIndexForContourInSpecifiedLevel++;
-//                currentPoint.setVisited(true);
-//                pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).add(new Point(currentPoint));
-//                doNextRound = true;
-//                int i = 0;
-//                while (doNextRound) {
-//                    minDistanceFromCurrentPoint = Float.MAX_VALUE;
-//                    for (Point point : listForLevel) {
-//                        if (i > 2) {
-//                            if (!point.equals(currentPoint) && (point.isVisited() == false || point.equals(pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).get(0)))) {
-//                                distanceFromCurrentPoint = countDistanceBetween2PointsIn2D(currentPoint, point);
-//                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint //&& distanceFromCurrentPoint < distanceLimit
-//                                        ) {
-//                                    minDistanceFromCurrentPoint = distanceFromCurrentPoint;
-//                                    nearestPointToCurrentPoint = point;
-//                                    nearestPointSet = true;
-//                                }
-//                            }
-//                        } else if (i <= 2) {
-//                            if (!point.equals(currentPoint) && point.isVisited() == false) {
-//                                distanceFromCurrentPoint = countDistanceBetween2PointsIn2D(currentPoint, point);
-//                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint //&& distanceFromCurrentPoint < distanceLimit
-//                                        ) {
-//                                    minDistanceFromCurrentPoint = distanceFromCurrentPoint;
-//                                    nearestPointToCurrentPoint = point;
-//                                    nearestPointSet = true;
-//                                }
-//                            }
-//                        }
-//
-//                    }
-//                    if (nearestPointSet) {
-//                        i++;
-//                        if (nearestPointToCurrentPoint.equals(pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).get(0))) {
-//                            doNextRound = false;
-//                            nearestPointSet = false;
-//                            //System.out.println("nearest is first");
-//                            pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).add(new Point(nearestPointToCurrentPoint));
-//
-//                            nearestPointToCurrentPoint = new Point();
-//                        } else {
-//                            nearestPointToCurrentPoint.setVisited(true);
-//                            pointsAccordingToCountoursForEachLevel.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).add(new Point(nearestPointToCurrentPoint));
-////i++;
-//                            nearestPointSet = false;
-//                            doNextRound = true;
-//                            currentPoint = nearestPointToCurrentPoint;
-//                        }
-//                        //currentPoint = nearestPointToCurrentPoint;
-//                    } else {
-//                        doNextRound = false;
-//                        nearestPointSet = false;
-//                        //System.out.println("set doNextRound to false");
-//                        nearestPointToCurrentPoint = new Point();
-//                    }
-//                }
-//
-//            }
-//
-//        }
-//        closeUnclosedContours();
-////        for (ArrayList<Point> listForLevel : pointsAccordintToLevels) {
-////            System.out.println("new level Y: ");
-////            for (Point point : listForLevel) {
-////                System.out.println("point: " + point.getCoords().getX() + " y: " + point.getCoords().getY());
-////            }
-////        }
-////        for (ArrayList<ArrayList<Point>> arrayList : pointsAccordingToCountoursForEachLevel) {
-////            System.out.println("level");
-////            for (ArrayList<Point> contour : arrayList) {
-////                System.out.println("contour:");
-////                for (Point point : contour) {
-////                    System.out.println("point: " + point.getCoords().getX() + " y: " + point.getCoords().getY() + " z: " + point.getCoords().getZ());
-////
-////                }
-////
-////            }
-////        }
-//    }
-//    private Point thereIsStillUnvisitedPoint(ArrayList<Point> listForLevel) {
-//        for (Point point : listForLevel) {
-//            if (point.isVisited() == false) {
-//                return point;
-//            }
-//        }
-//        return null;
-//    }
-//
-//    private void closeUnclosedContours() {
-//        for (ArrayList<ArrayList<Point>> arrayList : pointsAccordingToCountoursForEachLevel) {
-//            for (ArrayList<Point> contour : arrayList) {
-//                if (!contour.get(0).equals(contour.get(contour.size() - 1))) {
-//                    contour.add(contour.get(0));
-//                    System.out.println("finishing contour");
-//                }
-//
-//            }
-//        }
-//    }
     private float selectMax(float xDiff, float yDiff, float zDiff) {
         return Math.max(Math.max(xDiff, yDiff), zDiff);
     }
 
-//    private boolean findIfCenterOfCubeIsInsideContour(int level, int contourIndex, Point centerOfCube) {
-//        int rayIntersectsWithLine = 0;
-//        int leftIntersects = 0;
-//        int rightIntersects = 0;
-//        // for (ArrayList<Point> contour : pointsAccordingToCountoursForEachLevel.get(level)) {
-//        rayIntersectsWithLine = 0;
-//        leftIntersects = 0;
-//        rightIntersects = 0;
-//        for (Point point : pointsAccordingToCountoursForEachLevel.get(level).get(contourIndex)) {
-//            if (pointsAccordingToCountoursForEachLevel.get(level).get(contourIndex).indexOf(point) + 1 == pointsAccordingToCountoursForEachLevel.get(level).get(contourIndex).size()) {
-//                break; //aby na konci kontury nehledal další bod, který tam není
-//            }
-//            rayIntersectsWithLine = rayIntersectsWithLine(point, level, pointsAccordingToCountoursForEachLevel.get(level).get(contourIndex).get(pointsAccordingToCountoursForEachLevel.get(level).get(contourIndex).indexOf(point) + 1), centerOfCube);
-//            if (rayIntersectsWithLine == 1) {
-//                leftIntersects++;
-//            } else if (rayIntersectsWithLine == 2) {
-//                rightIntersects++;
-//            }
-//        }
-//        if ((leftIntersects % 2) != (rightIntersects % 2)) {
-//            System.out.println("něco je špatně L:" + leftIntersects + " R:" + rightIntersects);
-//            //return false;
-//        }
-//        if (leftIntersects % 2 == 0) {
-//            return false; //bod je mimo
-//        } else {
-//            return true;//bod je uvnitř
-//        }
-//        // }
-//        //return false;
-//    }
-//
-//    private int rayIntersectsWithLine(Point p1, int level, Point p2, Point centerOfCube) { //ret: 0- není průnik, 1-průnik nalevo od bodu, 2-průnik napravo od bodu
-//        if ((p1.getCoords().getZ() <= centerOfCube.getCoords().getZ() && p2.getCoords().getZ() >= centerOfCube.getCoords().getZ())
-//                || (p1.getCoords().getZ() >= centerOfCube.getCoords().getZ() && p2.getCoords().getZ() <= centerOfCube.getCoords().getZ())) {
-//            if (p1.getCoords().getZ() == p2.getCoords().getZ()) {
-//                return 0;
-//            } else {
-//                float intersectCoordX = p1.getCoords().getX() + (p2.getCoords().getX() - p1.getCoords().getX()) * (((centerOfCube.getCoords().getZ() - p1.getCoords().getZ()) / (p2.getCoords().getZ() - p1.getCoords().getZ())));
-//                pointsListIntersects.add(new Point(intersectCoordX, level, centerOfCube.getCoords().getZ())); //pak se tohohle zbavit!!!!
-//                //Point intersect= new Point(x,0,centerOfCube.getCoords().getZ()); //pouze s skutečnými souřadnicemi z,x
-//                // if(intersectCoordX == centerOfCube.getCoords().getX())System.out.println("rovnají se");
-//                if (intersectCoordX == p1.getCoords().getX() || intersectCoordX == p2.getCoords().getX()) {
-//                    System.out.println("noooooo");
-//                }
-//                if (centerOfCube.getCoords().getZ() == p1.getCoords().getZ() || centerOfCube.getCoords().getZ() == p2.getCoords().getZ()) {
-//                    System.out.println("noooooo2222");
-//                }
-//                if (intersectCoordX == centerOfCube.getCoords().getX()) {
-//                    System.out.println("nooooo333");
-//                }
-//                if (p2.getCoords().getX() == p1.getCoords().getX()) {
-//                    System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-//                }
-//                if (intersectCoordX < centerOfCube.getCoords().getX()) {
-//                    return 1;
-//                } else {
-//                    return 2;
-//                }
-//            }
-//        } else {
-//            return 0;
-//        }
-//    }
-//    private void fillModelWithCubes() {
-//        for (int y = 0; y < pointsAccordingToCountoursForEachLevel.size(); y++) {
-//            ArrayList<ArrayList<Point>> level = pointsAccordingToCountoursForEachLevel.get(y);
-//            for (int z = 0; z < maxZ + 1; z++) {
-//                ArrayList<Point> intersections = getIntersections(y, z, level);
-//                //System.out.println("y:" + y + " " + "z:" + z + " " + intersections.size());
-//                if (intersections.size() % 2 == 1) {
-//                    System.err.println("Lichý počet průsečíků:" + y);
-//                }
-//                for (int i = 0; i < intersections.size() / 2; i++) {
-//                    float from = Math.min(intersections.get(i * 2).getCoords().getX(), intersections.get(i * 2 + 1).getCoords().getX());
-//                    float to = Math.max(intersections.get(i * 2).getCoords().getX(), intersections.get(i * 2 + 1).getCoords().getX());
-//
-//                    for (int x = ((int) from) + 1; x < to; x++) {
-//                        pointsListCubesCenters.add(new Point(x, y, z));
-//                    }
-//                }
-//            }
-//        }
-//        /*
-//        for (ArrayList<ArrayList<Point>> listOfContours : pointsAccordingToCountoursForEachLevel) {
-//            for (ArrayList<Point> contour : listOfContours) {
-//                int y = pointsAccordingToCountoursForEachLevel.indexOf(listOfContours);
-////                if (y == -1) {
-////                    continue;
-////                }
-//                if (contour.size() == 3) {
-//                    continue; // je to vlastně čára tam a zpět
-//                }
-//                if (listOfContours.indexOf(contour) != 1) {
-//                    continue; //pak dstranit, je to jen pro test
-//                }
-//                System.out.println("xmin:" + minX + " ymin" + minY + " minZ" + minZ + " ksldfjlsdkjflskdjf");
-//                for (float z = 0; z <= maxZ; z += 1) {
-//                    for (float x = 0; x <= maxX; x += 1) {
-//                        int a = listOfContours.indexOf(contour);
-//                        if (findIfCenterOfCubeIsInsideContour(y, a, new Point(x, y, z))) {
-//                            pointsListCubesCenters.add(new Point(x, y, z));
-//                        }
-//                    }
-//                }
-//
-//            }
-//        }
-//         */
-//    }
-//    private void findDuplicatedPoints() {
-//        int sum = 0;
-//        for (Point point : pointsAccordingToCountoursForEachLevel.get(25).get(1)) {
-//            sum = 0;
-//            for (Point p : pointsAccordingToCountoursForEachLevel.get(25).get(1)) {
-//                if (point.getCoords().equals(p.getCoords())) {
-//                    sum++;
-//                }
-//            }
-//            System.out.println("id: " + pointsAccordingToCountoursForEachLevel.get(25).get(1).indexOf(point) + " sum: " + sum);
-//        }
-//
-//    }
-//    private void testPrintIntersectsIndexes() {
-//        for (Point point : pointsListIntersects) {
-//            System.out.println("index: " + pointsListIntersects.indexOf(point));
-//            System.out.println("       x: " + point.getCoords().getX() + " y: " + point.getCoords().getY() + " z: " + point.getCoords().getZ());
-//
-//        }
-//    }
-//    private ArrayList<Point> getIntersections(int y, int z, ArrayList<ArrayList<Point>> level) {
-//        ArrayList<Point> intersections = new ArrayList<>();
-//        for (ArrayList<Point> contour : level) {
-//            for (int i = 0; i < contour.size() - 1; i++) {
-//                Point p1 = contour.get(i);
-//                Point p2 = contour.get(i + 1);
-//                if (!isBetween(p1.getCoords().getZ(), p2.getCoords().getZ(), z)) {
-//                    continue;
-//                }
-//                float x = p1.getCoords().getX() + (p2.getCoords().getX() - p1.getCoords().getX()) * ((z - p1.getCoords().getZ()) / (p2.getCoords().getZ() - p1.getCoords().getZ()));
-//                intersections.add(new Point(x, y, z));
-//            }
-//        }
-//        return intersections;
-//    }
-//
-//    private boolean isBetween(float a, float b, int c) {
-//        return (a <= c && b >= c) || (a >= c && b <= c);
-//    }
     public float getMaxY() {
         return maxY;
     }

@@ -16,7 +16,7 @@ public class Point {
 
     private Vector3f coords = new Vector3f();
     private boolean exists = true;
-    private boolean visited=false;
+    private boolean visited = false;
 
     public boolean isExists() {
         return exists;
@@ -32,17 +32,16 @@ public class Point {
     public Point(Vector3f coords) {
         this.coords = coords;
     }
-    public Point(Point p){
+
+    public Point(Point p) {
         coords.set(p.getCoords());
-        exists=p.isExists();
-        visited=p.isVisited();
+        exists = p.isExists();
+        visited = p.isVisited();
     }
 
     public Point(String input) {
         String[] split = input.split(";");
         coords.set(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
-        //coords.scale(1000); //kvůli souboru bunny.txt
-//this.toString();
     }
 
     public Point(float x, float y, float z) {

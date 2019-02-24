@@ -91,16 +91,14 @@ public class ContourMaker {
                         } else {
                             nearestPointToCurrentPoint.setVisited(true);
                             contours.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).add(new Point(nearestPointToCurrentPoint));
-//i++;
+
                             nearestPointSet = false;
                             doNextRound = true;
                             currentPoint = nearestPointToCurrentPoint;
                         }
-                        //currentPoint = nearestPointToCurrentPoint;
                     } else {
                         doNextRound = false;
                         nearestPointSet = false;
-                        //System.out.println("set doNextRound to false");
                         nearestPointToCurrentPoint = new Point();
                     }
                 }
@@ -111,11 +109,11 @@ public class ContourMaker {
         closeUnclosedContours();
         return contours;
     }
-    
+
     private float countDistanceBetween2PointsIn2D(Point p1, Point p2) {
         return (float) Math.sqrt(Math.pow(p1.getCoords().getX() - p2.getCoords().getX(), 2) + Math.pow(p1.getCoords().getZ() - p2.getCoords().getZ(), 2));
     }
-    
+
     private Point thereIsStillUnvisitedPoint(ArrayList<Point> listForLevel) {
         for (Point point : listForLevel) {
             if (point.isVisited() == false) {
@@ -124,13 +122,12 @@ public class ContourMaker {
         }
         return null;
     }
-    
+
     private void closeUnclosedContours() {
         for (ArrayList<ArrayList<Point>> arrayList : contours) {
             for (ArrayList<Point> contour : arrayList) {
                 if (!contour.get(0).equals(contour.get(contour.size() - 1))) {
                     contour.add(contour.get(0));
-                    System.out.println("finishing contour");
                 }
 
             }
