@@ -8,9 +8,14 @@ package cz.grossmannova.pointcloudvisualiser.ui;
 import cz.grossmannova.pointcloudvisualiser.PointCloudVisualiser;
 import cz.grossmannova.pointcloudvisualiser.io.PointCloudFile;
 import cz.grossmannova.pointcloudvisualiser.io.PointCloudFileCSV;
+import cz.grossmannova.pointcloudvisualiser.models.CubesCloudModel;
 import cz.grossmannova.pointcloudvisualiser.models.ModelPointCloud;
+import cz.grossmannova.pointcloudvisualiser.pointcloud.ContourMaker;
+import cz.grossmannova.pointcloudvisualiser.pointcloud.CubesMaker;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.Point;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFileChooser;
 
 /**
@@ -121,7 +126,8 @@ public class GUI extends javax.swing.JFrame {
             }, "OGL");
             thread.start();
 
-        }        // TODO add your handling code here:
+            loadObject("C:\\Users\\Pavla\\Documents\\bunny.txt");
+        }
     }//GEN-LAST:event_formWindowOpened
 
     private void butImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butImportActionPerformed
@@ -130,14 +136,28 @@ public class GUI extends javax.swing.JFrame {
 
     private void fileOpenerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileOpenerActionPerformed
         if ("ApproveSelection".equals(evt.getActionCommand())) {
-            PointCloudFile file = new PointCloudFileCSV(fileOpener.getSelectedFile().getAbsolutePath());
-            app.sendModelToDraw(new ModelPointCloud(file.readPoints()));
+            loadObject(fileOpener.getSelectedFile().getAbsolutePath());
         }
     }//GEN-LAST:event_fileOpenerActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    app.setDoScreenshot(true);
+        app.setDoScreenshot(true);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void loadObject(String path) {
+        PointCloudFile file = new PointCloudFileCSV(path);
+        ModelPointCloud modelPointCloud = new ModelPointCloud(file.readPoints());
+        app.sendModelToDraw(modelPointCloud);
+        //System.out.println(modelPointCloud.pointsList.size());
+        ContourMaker contourMaker = new ContourMaker(modelPointCloud.pointsList, modelPointCloud.getMaxY());
+        ArrayList<ArrayList<ArrayList<Point>>> contours = contourMaker.generate();
+        //System.out.println(contours);
+        CubesMaker cubesMaker = new CubesMaker(contours, modelPointCloud.getMaxZ());
+        List<Point> cubes = cubesMaker.generate();
+        //System.out.println(cubes.size());
+        CubesCloudModel cubesCloudModel = new CubesCloudModel(cubes);
+        app.sendModelToDraw(cubesCloudModel);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butImport;

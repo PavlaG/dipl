@@ -79,7 +79,9 @@ public class PointCloudVisualiser {
 
     private void logicInicialization() {
         // camera = new Camera((noise.getSizeX() + 2) / 2 - 1, (noise.getSizeZ() + 2) / 2 - 1);
-        camera = new Camera((500 + 2) / 2 - 1, (500 + 2) / 2 - 1);
+        //camera = new Camera((500 + 2) / 2 - 1, (500 + 2) / 2 - 1);
+        camera = new Camera(20, 40);
+        
         Keyboard.enableRepeatEvents(true);
     }
 
@@ -88,7 +90,7 @@ public class PointCloudVisualiser {
         while (!Display.isCloseRequested() && !guiRequestedClose && !Thread.currentThread().isInterrupted()) {
             delta = getDelta();
             camera.input(delta);
-            renderManager.render(camera, models);
+            renderManager.render(camera, new ArrayList<>(models));
             renderManager.testError();
             if (doScreenshot) {
                 renderManager.doScreenshot();
