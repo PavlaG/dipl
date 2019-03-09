@@ -19,9 +19,14 @@ import java.util.List;
 public abstract class Model {
 
     public List<Point> pointsList;
+    public List<Block> blocksList;
 
     public Model(List<Point> pointsList) {
         this.pointsList = pointsList;
+    }
+    
+    public Model(List<Block> blocksList, int a) { //a je tam jen aby se odlišily konstruktory
+        this.blocksList = blocksList;
     }
 
     public abstract void draw();

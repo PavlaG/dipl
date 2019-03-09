@@ -15,8 +15,8 @@ public class Camera {
     private Vector3f move;
     private float delta;
     private double sin, cos;
-    private final float speed = 0.25f;
-    private final float speed2 = 0.08f;
+    private final float speedRot = 0.25f;
+    private final float speedMove = 0.08f;
     private Sphere centerpoint;
 
     public Camera(int x, int z) {
@@ -29,8 +29,8 @@ public class Camera {
         centerpoint.setOrientation(GLU.GLU_OUTSIDE);
     }
 
-    public void input(long delta) {
-        this.delta = delta;
+    public void input(long frameTime) {
+        this.delta = frameTime;
         move.set(0, 0, 0);
         while (Mouse.next()) {
             if (Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {
@@ -41,19 +41,20 @@ public class Camera {
         keyboard();
         sin = Math.sin(Math.toRadians(rotation.y));
         cos = Math.cos(Math.toRadians(rotation.y));
-        position.x += (cos * move.x + sin * move.z) * speed2 * delta;
-        position.z += (-cos * move.z + sin * move.x) * speed2 * delta;
+        position.x += (cos * move.x + sin * move.z);
+        position.y += move.y;
+        position.z += (-cos * move.z + sin * move.x);
 
     }
 
     private void mouse() {
         if (Mouse.isGrabbed()) {
-            distance += Mouse.getDWheel() / 6 * speed;
+            distance += Mouse.getDWheel() / 6 * speedRot;
             if (distance > 0) {
                 distance = 0;
             }
-            rotation.y += Mouse.getDX() * speed;
-            rotation.x -= Mouse.getDY() * speed;
+            rotation.y += Mouse.getDX() * speedRot;
+            rotation.x -= Mouse.getDY() * speedRot;
             if (rotation.x > 90) {
                 rotation.x = 90;
             } else if (rotation.x < -90) {
@@ -63,23 +64,27 @@ public class Camera {
     }
 
     private void keyboard() {
+        float slow = 1;
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+            slow = 0.1f;
+        }
         if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
-            position.y -= 1 * speed2 * delta;
+            move.y -= 1 * speedMove * delta * slow;
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
-            position.y += 1 * speed2 * delta;
+            move.y += 1 * speedMove * delta * slow;
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-            move.x += 1;
+            move.x += 1 * speedMove * delta * slow;
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-            move.x -= 1;
+            move.x -= 1 * speedMove * delta * slow;
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-            move.z -= 1;
+            move.z -= 1 * speedMove * delta * slow;
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-            move.z += 1;
+            move.z += 1 * speedMove * delta * slow;
         }
     }
 

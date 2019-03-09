@@ -5,6 +5,7 @@
  */
 package cz.grossmannova.pointcloudvisualiser.pointcloud;
 
+import cz.grossmannova.pointcloudvisualiser.models.Block;
 import java.util.Objects;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -14,9 +15,25 @@ import org.lwjgl.util.vector.Vector3f;
  */
 public class Point {
 
+    public static final Vector3f X_PLUS = new Vector3f(1, 0, 0);
+    public static final Vector3f X_MINUS = new Vector3f(-1, 0, 0);
+    public static final Vector3f Y_PLUS = new Vector3f(0, 1, 0);
+    public static final Vector3f Y_MINUS = new Vector3f(0, -1, 0);
+    public static final Vector3f Z_PLUS = new Vector3f(0, 0, 1);
+    public static final Vector3f Z_MINUS = new Vector3f(0, 0, -1);
+
     private Vector3f coords = new Vector3f();
     private boolean exists = true;
     private boolean visited = false;
+    private Block correspondingBlock= new Block();
+
+    public Block getCorrespondingBlock() {
+        return correspondingBlock;
+    }
+
+    public void setCorrespondingBlock(Block correspondingBlock) {
+        this.correspondingBlock = correspondingBlock;
+    }
 
     public boolean isExists() {
         return exists;
@@ -68,6 +85,10 @@ public class Point {
 
     public void setVisited(boolean visited) {
         this.visited = visited;
+    }
+
+    public void setCoords(Vector3f coords) {
+        this.coords = coords;
     }
 
     @Override

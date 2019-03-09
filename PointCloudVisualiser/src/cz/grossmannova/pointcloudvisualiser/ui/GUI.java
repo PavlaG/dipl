@@ -8,13 +8,20 @@ package cz.grossmannova.pointcloudvisualiser.ui;
 import cz.grossmannova.pointcloudvisualiser.PointCloudVisualiser;
 import cz.grossmannova.pointcloudvisualiser.io.PointCloudFile;
 import cz.grossmannova.pointcloudvisualiser.io.PointCloudFileCSV;
+import cz.grossmannova.pointcloudvisualiser.models.Block;
+import cz.grossmannova.pointcloudvisualiser.models.BlockCloudModel;
 import cz.grossmannova.pointcloudvisualiser.models.CubesCloudModel;
+import cz.grossmannova.pointcloudvisualiser.models.Graph;
+import cz.grossmannova.pointcloudvisualiser.models.GraphModel;
 import cz.grossmannova.pointcloudvisualiser.models.ModelPointCloud;
+import cz.grossmannova.pointcloudvisualiser.pointcloud.BlockMaker;
+import cz.grossmannova.pointcloudvisualiser.pointcloud.BlockMakerType;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.ContourMaker;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.CubesMaker;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.Point;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import javax.swing.JFileChooser;
 
@@ -156,7 +163,52 @@ public class GUI extends javax.swing.JFrame {
         List<Point> cubes = cubesMaker.generate();
         //System.out.println(cubes.size());
         CubesCloudModel cubesCloudModel = new CubesCloudModel(cubes);
-        app.sendModelToDraw(cubesCloudModel);
+        //app.sendModelToDraw(cubesCloudModel); //vykresluje vnitřní krychličky
+
+        //System.out.println("V1 " + cubes.size());
+        /*ArrayList<Point> cubesSet = new ArrayList<>();
+        for (Point cube : cubes) {
+            if (cubesSet.contains(cube)) {
+                System.err.println("Duplicate!!!" + cube);
+            } else {
+                cubesSet.add(cube);
+            }
+        }
+        cubes.clear();
+        cubes.addAll(cubesSet);*/
+        //System.out.println("V2 " + cubes.size());
+
+        ////zjištění, jestli tam jsou duplicitní body
+////        for (int i = 0; i < cubes.size(); i++) {
+////            for (int j = 0; j < cubes.size(); j++) {
+////                if (i == j) {
+////                    continue;
+////                }
+////                if (cubes.get(i).equals(cubes.get(j))) {
+////                    System.err.println("X Duplicate!!!" + cubes.get(i) + cubes.get(j));
+////                }
+////            }
+////        }
+//vytváření krychlí: 
+        BlockMaker cubeBlockMaker = new BlockMaker(cubes, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ(),BlockMakerType.CUBE_EXPANSION);
+        List<Block> cubeBlocks = cubeBlockMaker.generateCubes();
+        System.out.println("sizeeeeeeeeeeeeeeeeeee cubes"+cubeBlocks.size());
+        BlockCloudModel cubeBlockCloudModel = new BlockCloudModel(cubeBlocks);
+        //app.sendModelToDraw(cubeBlockCloudModel);
+
+//vytváření kvádrů:
+ BlockMaker cuboidBlockMaker = new BlockMaker(cubes, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ(),BlockMakerType.CUBOID_EXPANSION);
+        List<Block> cuboidBlocks = cuboidBlockMaker.generateCuboids();
+                System.out.println("sizeeeeeeeeeeeeeeeeeee cuboidssss"+cuboidBlocks.size());
+
+        BlockCloudModel cuboidBlockCloudModel = new BlockCloudModel(cuboidBlocks);
+        //app.sendModelToDraw(cuboidBlockCloudModel);
+    
+    Graph graph= new Graph(cuboidBlocks,modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ());
+        GraphModel graphModel= new GraphModel(graph.getLineGraph()); //momentálně jen body
+        app.sendModelToDraw(graphModel);
+    
+    
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

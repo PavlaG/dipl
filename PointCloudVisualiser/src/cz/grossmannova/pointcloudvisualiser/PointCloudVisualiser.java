@@ -31,7 +31,7 @@ public class PointCloudVisualiser {
     private List<Model> models = new ArrayList<>();
     private boolean guiRequestedClose = false;
     private long lastFrame;
-    private int delta;
+    //private int delta;
     private boolean doScreenshot = false;
 
     public static void main(String[] args) {
@@ -81,15 +81,30 @@ public class PointCloudVisualiser {
         // camera = new Camera((noise.getSizeX() + 2) / 2 - 1, (noise.getSizeZ() + 2) / 2 - 1);
         //camera = new Camera((500 + 2) / 2 - 1, (500 + 2) / 2 - 1);
         camera = new Camera(20, 40);
-        
+
         Keyboard.enableRepeatEvents(true);
     }
 
     private void mainLoop() {
-        lastFrame = getTime();
         while (!Display.isCloseRequested() && !guiRequestedClose && !Thread.currentThread().isInterrupted()) {
-            delta = getDelta();
-            camera.input(delta);
+            long frameTime = getFrameTime();
+            System.out.println(frameTime);
+            camera.input(frameTime);
+//            if (Keyboard.isKeyDown(Keyboard.KEY_Y)) {
+//                ArrayList<Model> arrayList = new ArrayList<>();
+//                arrayList.add(models.get(0));
+//                renderManager.render(camera, arrayList);
+//            }
+//            if (Keyboard.isKeyDown(Keyboard.KEY_X)) {
+//                ArrayList<Model> arrayList = new ArrayList<>();
+//                arrayList.add(models.get(1));
+//                renderManager.render(camera, arrayList);
+//            }
+//            if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
+//                ArrayList<Model> arrayList = new ArrayList<>();
+//                arrayList.add(models.get(2));
+//                renderManager.render(camera, arrayList);
+//            }
             renderManager.render(camera, new ArrayList<>(models));
             renderManager.testError();
             if (doScreenshot) {
@@ -114,10 +129,10 @@ public class PointCloudVisualiser {
         return (Sys.getTime() * 1000) / Sys.getTimerResolution();
     }
 
-    private int getDelta() {
+    private long getFrameTime() {
         long currentTime = getTime();
-        int delta = (int) (currentTime - lastFrame);
-        lastFrame = getTime();
+        long delta = currentTime - lastFrame;
+        lastFrame = currentTime;
         return delta;
     }
 
@@ -132,5 +147,5 @@ public class PointCloudVisualiser {
     public void setDoScreenshot(boolean doScreenshot) {
         this.doScreenshot = doScreenshot;
     }
-    
+
 }

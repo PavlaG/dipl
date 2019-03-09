@@ -97,7 +97,7 @@ public class ModelPointCloud extends Model {
 
     private void scale() {
         //pak se bude zadávat uživatelem, teď natvrdo:
-        int scale = 80;
+        int scale = 40;
         for (Point point : pointsListNormalised) {
             pointsListScaled.add(new Point(
                     point.getCoords().getX() * scale,
@@ -209,6 +209,10 @@ public class ModelPointCloud extends Model {
         return Math.max(Math.max(xDiff, yDiff), zDiff);
     }
 
+    public float getMaxX() {
+        return maxX;
+    }
+    
     public float getMaxY() {
         return maxY;
     }
