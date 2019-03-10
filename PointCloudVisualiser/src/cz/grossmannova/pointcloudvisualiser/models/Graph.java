@@ -46,14 +46,6 @@ public class Graph {
 
     }
 
-//    public void turnBlocksToGraph(BlockMakerType type) {
-//        if (type == BlockMakerType.CUBE_EXPANSION) {
-//            cubesToGraph();
-//        } else if (type == BlockMakerType.CUBOID_EXPANSION) {
-//            cuboidsToGraph();
-//        }
-//    }
-
     public ArrayList<Point> getLineGraph() {
         centers = new ArrayList<>();
         for (Block block : blocks) {
@@ -61,7 +53,6 @@ public class Graph {
                 centers.add(block.getCenter());
                 centers.add(neighbour.getCenter());
             }
-            //centers.add(block.getCenter());
         }
         return centers;
     }
@@ -71,17 +62,11 @@ public class Graph {
             //stěna vpravo
             for (int z = (int) block.getPosition().z; z <= (int) block.getPosition().z + block.getSize().z - 1; z++) {
                 for (int y = (int) block.getPosition().y; y <= (int) block.getPosition().y + block.getSize().y - 1; y++) {
-                  //  if (block.getPosition().x + 1 <= cubesArray.length - 1 && cubesExistance[(int) block.getPosition().x + 1][y][z] == true) {
                    if (block.getPosition().x +(int) block.getSize().x <= cubesArray.length - 1 && cubesExistance[(int) block.getPosition().x +(int) block.getSize().x][y][z] == true) {
                         if (!cubesArray[(int) block.getPosition().x+(int) block.getSize().x-1][y][z].getCorrespondingBlock().equals(cubesArray[(int) block.getPosition().x +(int) block.getSize().x][y][z].getCorrespondingBlock())) {
-                          //   System.out.println("---------------");
                             block.addNeighbour(cubesArray[(int) block.getPosition().x +(int) block.getSize().x][y][z].getCorrespondingBlock());
                             cubesArray[(int) block.getPosition().x +(int) block.getSize().x][y][z].getCorrespondingBlock().addNeighbour(block);
-                           
-//                            System.out.println("block:"+ block.toString());
-//                            System.out.println("neighbour"+ cubesArray[(int) block.getPosition().x +(int) block.getSize().x][y][z].getCorrespondingBlock().toString());
-//                             System.out.println("---------------------------");
-                        }
+                         }
                     }
                 }
 
@@ -113,6 +98,34 @@ public class Graph {
         }
         
         
+    }
+
+    public List<Block> getBlocks() {
+       return blocks;
+    }
+
+    public boolean[][][] getCubesExistance() {
+        return cubesExistance;
+    }
+
+    public void setCubesExistance(boolean[][][] cubesExistance) {
+        this.cubesExistance = cubesExistance;
+    }
+
+    public Point[][][] getCubesArray() {
+        return cubesArray;
+    }
+
+    public void setCubesArray(Point[][][] cubesArray) {
+        this.cubesArray = cubesArray;
+    }
+
+    public ArrayList<Point> getCenters() {
+        return centers;
+    }
+
+    public void setCenters(ArrayList<Point> centers) {
+        this.centers = centers;
     }
 
     

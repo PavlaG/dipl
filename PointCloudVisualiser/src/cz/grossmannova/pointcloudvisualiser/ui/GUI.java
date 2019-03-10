@@ -14,6 +14,9 @@ import cz.grossmannova.pointcloudvisualiser.models.CubesCloudModel;
 import cz.grossmannova.pointcloudvisualiser.models.Graph;
 import cz.grossmannova.pointcloudvisualiser.models.GraphModel;
 import cz.grossmannova.pointcloudvisualiser.models.ModelPointCloud;
+import cz.grossmannova.pointcloudvisualiser.models.SphereModel;
+import cz.grossmannova.pointcloudvisualiser.pathfinding.AlgorithmName;
+import cz.grossmannova.pointcloudvisualiser.pathfinding.Pathfinder;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.BlockMaker;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.BlockMakerType;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.ContourMaker;
@@ -51,6 +54,7 @@ public class GUI extends javax.swing.JFrame {
         graphicsCanvas = new java.awt.Canvas();
         butImport = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         fileOpener.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -95,6 +99,13 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        jButton2.setText("Náhodně zvolit start a cíl");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -102,11 +113,12 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(65, 65, 65)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(butImport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
-                .addContainerGap(28, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(28, 28, 28))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,6 +130,8 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(butImport)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
+                .addGap(18, 18, 18)
+                .addComponent(jButton2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -151,6 +165,12 @@ public class GUI extends javax.swing.JFrame {
         app.setDoScreenshot(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+//app.setRandomlySetStartAndFinish(true); 
+
+// TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     private void loadObject(String path) {
         PointCloudFile file = new PointCloudFileCSV(path);
         ModelPointCloud modelPointCloud = new ModelPointCloud(file.readPoints());
@@ -177,7 +197,6 @@ public class GUI extends javax.swing.JFrame {
         cubes.clear();
         cubes.addAll(cubesSet);*/
         //System.out.println("V2 " + cubes.size());
-
         ////zjištění, jestli tam jsou duplicitní body
 ////        for (int i = 0; i < cubes.size(); i++) {
 ////            for (int j = 0; j < cubes.size(); j++) {
@@ -190,25 +209,37 @@ public class GUI extends javax.swing.JFrame {
 ////            }
 ////        }
 //vytváření krychlí: 
-        BlockMaker cubeBlockMaker = new BlockMaker(cubes, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ(),BlockMakerType.CUBE_EXPANSION);
+        BlockMaker cubeBlockMaker = new BlockMaker(cubes, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ(), BlockMakerType.CUBE_EXPANSION);
         List<Block> cubeBlocks = cubeBlockMaker.generateCubes();
-        System.out.println("sizeeeeeeeeeeeeeeeeeee cubes"+cubeBlocks.size());
         BlockCloudModel cubeBlockCloudModel = new BlockCloudModel(cubeBlocks);
         //app.sendModelToDraw(cubeBlockCloudModel);
 
 //vytváření kvádrů:
- BlockMaker cuboidBlockMaker = new BlockMaker(cubes, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ(),BlockMakerType.CUBOID_EXPANSION);
+        BlockMaker cuboidBlockMaker = new BlockMaker(cubes, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ(), BlockMakerType.CUBOID_EXPANSION);
         List<Block> cuboidBlocks = cuboidBlockMaker.generateCuboids();
-                System.out.println("sizeeeeeeeeeeeeeeeeeee cuboidssss"+cuboidBlocks.size());
 
         BlockCloudModel cuboidBlockCloudModel = new BlockCloudModel(cuboidBlocks);
         //app.sendModelToDraw(cuboidBlockCloudModel);
-    
-    Graph graph= new Graph(cuboidBlocks,modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ());
-        GraphModel graphModel= new GraphModel(graph.getLineGraph()); //momentálně jen body
-        app.sendModelToDraw(graphModel);
-    
-    
+
+        //vytváření krychlí skrz octree
+        BlockMaker cubesOctreeBlockMaker = new BlockMaker(cubes, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ(), BlockMakerType.OCTREE);
+        List<Block> cubesOctreeBlocks = cubesOctreeBlockMaker.generateCubesThroughOctree();
+
+        BlockCloudModel cubeOctreeBlockCloudModel = new BlockCloudModel(cubesOctreeBlocks);
+        // app.sendModelToDraw(cubeOctreeBlockCloudModel);
+
+        Graph graph = new Graph(cubesOctreeBlocks, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ());
+        GraphModel graphModel = new GraphModel(graph.getLineGraph()); //momentálně jen body
+        //app.sendModelToDraw(graphModel);
+
+        Pathfinder pathfinder = new AlgorithmName(graph);
+        pathfinder.randomlySetStartAndFinish();
+        SphereModel start = new SphereModel(pathfinder.getStart());
+        app.sendModelToDraw(start);
+        SphereModel finish = new SphereModel(pathfinder.getFinish());
+
+        app.sendModelToDraw(finish);
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -216,6 +247,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JFileChooser fileOpener;
     private java.awt.Canvas graphicsCanvas;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

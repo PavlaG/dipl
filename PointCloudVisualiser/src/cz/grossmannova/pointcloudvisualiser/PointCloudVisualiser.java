@@ -8,6 +8,7 @@ package cz.grossmannova.pointcloudvisualiser;
 import cz.grossmannova.pointcloudvisualiser.graphics.Camera;
 import cz.grossmannova.pointcloudvisualiser.graphics.RenderManager;
 import cz.grossmannova.pointcloudvisualiser.models.Model;
+import cz.grossmannova.pointcloudvisualiser.pathfinding.Pathfinder;
 import cz.grossmannova.pointcloudvisualiser.ui.GUI;
 import cz.grossmannova.pointcloudvisualiser.utils.LibUtils;
 import java.awt.Canvas;
@@ -33,7 +34,9 @@ public class PointCloudVisualiser {
     private long lastFrame;
     //private int delta;
     private boolean doScreenshot = false;
+//private boolean randomlySetStartAndFinish=false;
 
+private Pathfinder pathfinder;
     public static void main(String[] args) {
 
         PointCloudVisualiser app = new PointCloudVisualiser();
@@ -88,7 +91,7 @@ public class PointCloudVisualiser {
     private void mainLoop() {
         while (!Display.isCloseRequested() && !guiRequestedClose && !Thread.currentThread().isInterrupted()) {
             long frameTime = getFrameTime();
-            System.out.println(frameTime);
+            //System.out.println(frameTime);
             camera.input(frameTime);
 //            if (Keyboard.isKeyDown(Keyboard.KEY_Y)) {
 //                ArrayList<Model> arrayList = new ArrayList<>();
@@ -111,6 +114,11 @@ public class PointCloudVisualiser {
                 renderManager.doScreenshot();
                 doScreenshot = false;
             }
+            
+//            if (randomlySetStartAndFinish) {
+//                něco udělat
+//                randomlySetStartAndFinish = false;
+//            }
             Display.update();
             Display.sync(60);
         }
@@ -147,5 +155,13 @@ public class PointCloudVisualiser {
     public void setDoScreenshot(boolean doScreenshot) {
         this.doScreenshot = doScreenshot;
     }
+    
+//    public boolean isRandomlySetStartAndFinish() {
+//        return randomlySetStartAndFinish;
+//    }
+//    
+//    public void setRandomlySetStartAndFinish(boolean randomlySetStartAndFinish){
+//        this.randomlySetStartAndFinish=randomlySetStartAndFinish;
+//    }
 
 }

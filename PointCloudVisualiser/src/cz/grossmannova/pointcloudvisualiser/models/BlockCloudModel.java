@@ -32,7 +32,7 @@ public class BlockCloudModel extends Model {
             GL11.glNewList(listId, GL11.GL_COMPILE_AND_EXECUTE);
             GL11.glBegin(GL11.GL_QUADS);
             for (Block block : blocksList) {
-
+//if (block.getInnerPoints().size()>70){
                 GL11.glColor3f(block.getColor().getX(), block.getColor().getY(), block.getColor().getZ());
                 { // TOP
                     GL11.glNormal3f(0, 1, 0);
@@ -93,8 +93,8 @@ public class BlockCloudModel extends Model {
                     GL11.glVertex3f(block.getPosition().getX() - 0.5f, block.getPosition().getY() + block.getSize().y - 1 + 0.5f, block.getPosition().getZ() - 0.5f);
                     GL11.glNormal3f(0, 0, -1);
                     GL11.glVertex3f(block.getPosition().getX() + block.getSize().x - 1 + 0.5f, block.getPosition().getY() + block.getSize().y - 1 + 0.5f, block.getPosition().getZ() - 0.5f);
-                }
-            }
+          //      }
+            }}
             GL11.glEnd();
             GL11.glEndList();
         } else {

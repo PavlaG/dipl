@@ -24,14 +24,12 @@ public class Block {
     private Vector3f size;
     private Vector3f color = new Vector3f();
     private Point center;
-    //private List<Block> neighbours;
-    Set<Block> neighbours = new HashSet<Block>();
+    private Set<Block> neighbours = new HashSet<Block>();
 
     public Block() {
         innerPoints = new ArrayList<>();
         position = new Vector3f();
         size = new Vector3f();
-        //neighbours = new ArrayList<>();
         setColor();
     }
 
@@ -39,7 +37,6 @@ public class Block {
         this.innerPoints = innerPoints;
         this.size = new Vector3f(sizeX, sizeY, sizeZ);
         this.position = position;
-        // neighbours = new ArrayList<>();
         setColor();
     }
 
@@ -47,7 +44,13 @@ public class Block {
         this.innerPoints = innerPoints;
         this.size = size;
         this.position = position;
-       // neighbours = new ArrayList<>();
+        setColor();
+    }
+    
+    public Block(Vector3f size, Vector3f position) {
+        this.innerPoints = new ArrayList<>();
+        this.size = size;
+        this.position = position;
         setColor();
     }
 
@@ -176,22 +179,10 @@ public class Block {
         this.center = center;
     }
     public void createCenter(){
-        center=new Point(new Vector3f(this.position.x + this.size.x - 1, this.position.y + this.size.y - 1, this.position.z + this.size.z - 1));
+        center=new Point(new Vector3f(this.position.x + (this.size.x - 1)/2, this.position.y + (this.size.y - 1)/2, this.position.z + (this.size.z - 1)/2));
        center.setCorrespondingBlock(this);
         
     }
-
-//    public List<Block> getNeighbours() {
-//        return neighbours;
-//    }
-//
-//    public void setNeighbours(List<Block> neighbours) {
-//        this.neighbours = neighbours;
-//    }
-//
-//    public void addNeighbour(Block neighbour) {
-//        neighbours.add(neighbour);
-//    }
 
     public Set<Block> getNeighbours() {
         return neighbours;
@@ -203,7 +194,6 @@ public class Block {
     
     public void addNeighbour(Block neighbour){
        if( neighbours.add(neighbour)){
-        System.out.println("ading");
        }
     }
 
