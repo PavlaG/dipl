@@ -5,10 +5,12 @@
  */
 package cz.grossmannova.pointcloudvisualiser.models;
 
+import cz.grossmannova.pointcloudvisualiser.pathfinding.Edge;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import org.lwjgl.util.vector.Vector3f;
@@ -25,7 +27,12 @@ public class Block {
     private Vector3f color = new Vector3f();
     private Point center;
     private Set<Block> neighbours = new HashSet<Block>();
+    private Set<Edge> edges = new HashSet<Edge>();
 
+    private boolean visited = false;
+    float finishDistance = -1;
+    float startDistance=Integer.MAX_VALUE;
+Block previousBlock;//= new Block();
     public Block() {
         innerPoints = new ArrayList<>();
         position = new Vector3f();
@@ -46,7 +53,7 @@ public class Block {
         this.position = position;
         setColor();
     }
-    
+
     public Block(Vector3f size, Vector3f position) {
         this.innerPoints = new ArrayList<>();
         this.size = size;
@@ -175,13 +182,14 @@ public class Block {
     }
 
     public void setCenter(Point center) {
-        
+
         this.center = center;
     }
-    public void createCenter(){
-        center=new Point(new Vector3f(this.position.x + (this.size.x - 1)/2, this.position.y + (this.size.y - 1)/2, this.position.z + (this.size.z - 1)/2));
-       center.setCorrespondingBlock(this);
-        
+
+    public void createCenter() {
+        center = new Point(new Vector3f(this.position.x + (this.size.x - 1) / 2, this.position.y + (this.size.y - 1) / 2, this.position.z + (this.size.z - 1) / 2));
+        center.setCorrespondingBlock(this);
+
     }
 
     public Set<Block> getNeighbours() {
@@ -191,12 +199,106 @@ public class Block {
     public void setNeighbours(Set<Block> neighbours) {
         this.neighbours = neighbours;
     }
-    
-    public void addNeighbour(Block neighbour){
-       if( neighbours.add(neighbour)){
-       }
+
+    public void addNeighbour(Block neighbour) {
+//       if( neighbours.add(neighbour)){
+//       }
+        neighbours.add(neighbour);
     }
 
+    public Set<Edge> getEdges() {
+        return edges;
+    }
+
+    public void setEdges(Set<Edge> edges) {
+        this.edges = edges;
+    }
+
+    public void addEdge(Edge edge) {
+        edges.add(edge);
+    }
+
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+    public float getFinishDistance() {
+        return finishDistance;
+    }
+
+    public void setFinishDistance(float finishDistance) {
+        this.finishDistance = finishDistance;
+    }
     
+    public void countFinishDistance(Block finish) {
+        if(finishDistance==-1){
+        this.finishDistance=(float) Math.sqrt(Math.pow(center.getCoords().x - finish.getCenter().getCoords().x, 2)
+                + Math.pow(center.getCoords().y - finish.getCenter().getCoords().y, 2)
+                + Math.pow(center.getCoords().z - finish.getCenter().getCoords().z, 2));
+    }}
+
+    public float getStartDistance() {
+        return startDistance;
+    }
+
+    public void setStartDistance(float startDistance) {
+        this.startDistance = startDistance;
+    }
+
+    public Block getPreviousBlock() {
+        return previousBlock;
+    }
+
+    public void setPreviousBlock(Block previoudBlock) {
+        this.previousBlock = previoudBlock;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.position);
+        hash = 29 * hash + Objects.hashCode(this.size);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Block other = (Block) obj;
+        if (!Objects.equals(this.position, other.position)) {
+            return false;
+        }
+        if (!Objects.equals(this.size, other.size)) {
+            return false;
+        }
+        return true;
+    }
+    
+    public void myString(){
+        System.out.println("///////////////");
+        System.out.println("position: "+ position.toString());
+        System.out.println("size: "+ size.toString());
+        System.out.println("edges:"+ edges.size());
+        for (Edge edge : edges) {
+            System.out.println("   edge: "+ edge.getBlockFrom().center+ " to: "+ edge.getBlockTo().center+ " weight: "+ edge.getWeight());
+        }
+        System.out.println("neighbours: "+ neighbours.size());
+        for (Block neighbour : neighbours) {
+            System.out.println("neigh: "+ neighbour.getCenter());
+        }
+        System.out.println("////////////////////");
+    }
 
 }

@@ -5,6 +5,7 @@
  */
 package cz.grossmannova.pointcloudvisualiser.models;
 
+import cz.grossmannova.pointcloudvisualiser.pathfinding.Edge;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.BlockMakerType;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.Point;
 import java.util.ArrayList;
@@ -62,11 +63,13 @@ public class Graph {
             //stěna vpravo
             for (int z = (int) block.getPosition().z; z <= (int) block.getPosition().z + block.getSize().z - 1; z++) {
                 for (int y = (int) block.getPosition().y; y <= (int) block.getPosition().y + block.getSize().y - 1; y++) {
-                   if (block.getPosition().x +(int) block.getSize().x <= cubesArray.length - 1 && cubesExistance[(int) block.getPosition().x +(int) block.getSize().x][y][z] == true) {
-                        if (!cubesArray[(int) block.getPosition().x+(int) block.getSize().x-1][y][z].getCorrespondingBlock().equals(cubesArray[(int) block.getPosition().x +(int) block.getSize().x][y][z].getCorrespondingBlock())) {
-                            block.addNeighbour(cubesArray[(int) block.getPosition().x +(int) block.getSize().x][y][z].getCorrespondingBlock());
-                            cubesArray[(int) block.getPosition().x +(int) block.getSize().x][y][z].getCorrespondingBlock().addNeighbour(block);
-                         }
+                    if (block.getPosition().x + (int) block.getSize().x <= cubesArray.length - 1 && cubesExistance[(int) block.getPosition().x + (int) block.getSize().x][y][z] == true) {
+                        if (!cubesArray[(int) block.getPosition().x + (int) block.getSize().x - 1][y][z].getCorrespondingBlock().equals(cubesArray[(int) block.getPosition().x + (int) block.getSize().x][y][z].getCorrespondingBlock())) {
+                            block.addNeighbour(cubesArray[(int) block.getPosition().x + (int) block.getSize().x][y][z].getCorrespondingBlock());
+                            block.addEdge(new Edge(block, cubesArray[(int) block.getPosition().x + (int) block.getSize().x][y][z].getCorrespondingBlock()));
+                            cubesArray[(int) block.getPosition().x + (int) block.getSize().x][y][z].getCorrespondingBlock().addNeighbour(block);
+                            cubesArray[(int) block.getPosition().x + (int) block.getSize().x][y][z].getCorrespondingBlock().addEdge(new Edge(cubesArray[(int) block.getPosition().x + (int) block.getSize().x][y][z].getCorrespondingBlock(), block));
+                        }
                     }
                 }
 
@@ -74,10 +77,14 @@ public class Graph {
             //stěna vepředu
             for (int x = (int) block.getPosition().x; x <= (int) block.getPosition().x + block.getSize().x - 1; x++) {
                 for (int y = (int) block.getPosition().y; y <= (int) block.getPosition().y + block.getSize().y - 1; y++) {
-                    if (block.getPosition().z+(int) block.getSize().z <= cubesArray[x][y].length - 1 && cubesExistance[x][y][(int) block.getPosition().z +(int) block.getSize().z] == true) {
-                        if (!cubesArray[x][y][(int) block.getPosition().z  +(int) block.getSize().z-1].getCorrespondingBlock().equals(cubesArray[x][y][(int) block.getPosition().z  +(int) block.getSize().z].getCorrespondingBlock())) {
-                            block.addNeighbour(cubesArray[x][y][(int) block.getPosition().z  +(int) block.getSize().z].getCorrespondingBlock());
-                           cubesArray[x][y][(int) block.getPosition().z  +(int) block.getSize().z].getCorrespondingBlock().addNeighbour(block);
+                    if (block.getPosition().z + (int) block.getSize().z <= cubesArray[x][y].length - 1 && cubesExistance[x][y][(int) block.getPosition().z + (int) block.getSize().z] == true) {
+                        if (!cubesArray[x][y][(int) block.getPosition().z + (int) block.getSize().z - 1].getCorrespondingBlock().equals(cubesArray[x][y][(int) block.getPosition().z + (int) block.getSize().z].getCorrespondingBlock())) {
+                            block.addNeighbour(cubesArray[x][y][(int) block.getPosition().z + (int) block.getSize().z].getCorrespondingBlock());
+                            cubesArray[x][y][(int) block.getPosition().z + (int) block.getSize().z].getCorrespondingBlock().addNeighbour(block);
+
+                            block.addEdge(new Edge(block, cubesArray[x][y][(int) block.getPosition().z + (int) block.getSize().z].getCorrespondingBlock()));
+                            cubesArray[x][y][(int) block.getPosition().z + (int) block.getSize().z].getCorrespondingBlock().addEdge(new Edge(cubesArray[x][y][(int) block.getPosition().z + (int) block.getSize().z].getCorrespondingBlock(), block));
+
                         }
                     }
                 }
@@ -87,21 +94,24 @@ public class Graph {
             //stěna dole
             for (int x = (int) block.getPosition().x; x <= (int) block.getPosition().x + block.getSize().x - 1; x++) {
                 for (int z = (int) block.getPosition().z; z <= (int) block.getPosition().z + block.getSize().z - 1; z++) {
-                    if (block.getPosition().y  +(int) block.getSize().y <= cubesArray[x].length - 1 && cubesExistance[x][(int) block.getPosition().y +(int) block.getSize().y][z] == true) {
-                        if (!cubesArray[x][(int) block.getPosition().y +(int) block.getSize().y-1][z].getCorrespondingBlock().equals(cubesArray[x][(int) block.getPosition().y +(int) block.getSize().y][z].getCorrespondingBlock())) {
-                            block.addNeighbour(cubesArray[x][(int) block.getPosition().y +(int) block.getSize().y][z].getCorrespondingBlock());
-                            cubesArray[x][(int) block.getPosition().y +(int) block.getSize().y][z].getCorrespondingBlock().addNeighbour(block);
+                    if (block.getPosition().y + (int) block.getSize().y <= cubesArray[x].length - 1 && cubesExistance[x][(int) block.getPosition().y + (int) block.getSize().y][z] == true) {
+                        if (!cubesArray[x][(int) block.getPosition().y + (int) block.getSize().y - 1][z].getCorrespondingBlock().equals(cubesArray[x][(int) block.getPosition().y + (int) block.getSize().y][z].getCorrespondingBlock())) {
+                            block.addNeighbour(cubesArray[x][(int) block.getPosition().y + (int) block.getSize().y][z].getCorrespondingBlock());
+                            cubesArray[x][(int) block.getPosition().y + (int) block.getSize().y][z].getCorrespondingBlock().addNeighbour(block);
+
+                            block.addEdge(new Edge(block, cubesArray[x][(int) block.getPosition().y + (int) block.getSize().y][z].getCorrespondingBlock()));
+                            cubesArray[x][(int) block.getPosition().y + (int) block.getSize().y][z].getCorrespondingBlock().addEdge(new Edge(cubesArray[x][(int) block.getPosition().y + (int) block.getSize().y][z].getCorrespondingBlock(), block));
+
                         }
                     }
                 }
             }
         }
-        
-        
+
     }
 
     public List<Block> getBlocks() {
-       return blocks;
+        return blocks;
     }
 
     public boolean[][][] getCubesExistance() {
@@ -128,5 +138,4 @@ public class Graph {
         this.centers = centers;
     }
 
-    
 }

@@ -230,13 +230,19 @@ public class GUI extends javax.swing.JFrame {
 
         Graph graph = new Graph(cubesOctreeBlocks, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ());
         GraphModel graphModel = new GraphModel(graph.getLineGraph()); //momentálně jen body
-        //app.sendModelToDraw(graphModel);
+        // app.sendModelToDraw(graphModel);
 
         Pathfinder pathfinder = new AlgorithmName(graph);
         pathfinder.randomlySetStartAndFinish();
-        SphereModel start = new SphereModel(pathfinder.getStart());
+        if(pathfinder.findPath()){
+        
+        GraphModel graphModelForPath = new GraphModel(pathfinder.getLineGraph());
+        app.sendModelToDraw(graphModelForPath);
+        }
+        else System.out.println("nepodařilo se najít konec");
+        SphereModel start = new SphereModel(pathfinder.getStart().getCenter());
         app.sendModelToDraw(start);
-        SphereModel finish = new SphereModel(pathfinder.getFinish());
+        SphereModel finish = new SphereModel(pathfinder.getFinish().getCenter());
 
         app.sendModelToDraw(finish);
 

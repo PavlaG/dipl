@@ -33,7 +33,7 @@ public class SphereModel extends Model {
             GL11.glNewList(listId, GL11.GL_COMPILE_AND_EXECUTE);
             GL11.glColor3f(1f, 0.7f, 0.3f);
             GL11.glTranslatef(point.getCoords().getX(), point.getCoords().getY() + offset, point.getCoords().getZ());
-            nodeVisualization.draw(0.7f, 10, 10);
+            nodeVisualization.draw(0.5f, 10, 10);
             GL11.glTranslatef(-point.getCoords().getX(), -point.getCoords().getY() - offset, -point.getCoords().getZ());
             GL11.glEndList();
         } else {

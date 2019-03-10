@@ -26,6 +26,9 @@ public class Point {
     private boolean exists = true;
     private boolean visited = false;
     private Block correspondingBlock= new Block();
+    
+    
+   
 
     public Block getCorrespondingBlock() {
         return correspondingBlock;

@@ -8,6 +8,7 @@ package cz.grossmannova.pointcloudvisualiser.pathfinding;
 import cz.grossmannova.pointcloudvisualiser.models.Block;
 import cz.grossmannova.pointcloudvisualiser.models.Graph;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.Point;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,39 +20,41 @@ public abstract class Pathfinder {
     protected List<Point> path;
     protected Graph graph;
     protected List<Block> blocks;
-    protected Point start;
-    protected Point finish;
+    protected Block start;
+    protected Block finish;
     protected boolean[][][] cubesExistance;
     protected Point[][][] cubesArray;
 
     public Pathfinder(Graph graph) {
         this.graph = graph;
         this.blocks = graph.getBlocks();
-        start = new Point();
-        finish = new Point();
+        start = new Block();
+        finish = new Block();
         cubesExistance = graph.getCubesExistance();
         cubesArray = graph.getCubesArray();
     }
 
-    public abstract void findPath();
+    public abstract boolean findPath();
 
     public abstract void randomlySetStartAndFinish();
 
-    public Point getStart() {
+    public Block getStart() {
         return start;
     }
 
-    public void setStart(Point start) {
+    public void setStart(Block start) {
         this.start = start;
     }
 
-    public Point getFinish() {
+    public Block getFinish() {
         return finish;
     }
 
-    public void setFinish(Point finish) {
+    public void setFinish(Block finish) {
         this.finish = finish;
     }
+    
+    public abstract ArrayList<Point> getLineGraph();
     
     
 
