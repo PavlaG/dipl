@@ -36,7 +36,45 @@ public abstract class Pathfinder {
 
     public abstract boolean findPath();
 
-    public abstract void randomlySetStartAndFinish();
+   public void randomlySetStartAndFinish() {
+        boolean stop = false;
+        for (int y = 0; y < cubesArray[1].length; y++) {
+            for (int x = 0; x < cubesArray.length; x++) {
+                for (int z = 0; z < cubesArray[1][1].length; z++) {
+                    if (cubesExistance[x][y][z] == true) {
+                        start = cubesArray[x][y][z].getCorrespondingBlock();
+                        stop = true;
+                        break;
+                    }
+                }
+                if (stop) {
+                    break;
+                }
+            }
+            if (stop) {
+                break;
+            }
+        }
+
+        stop = false;
+        for (int y = cubesArray[1].length - 7; y >= 0; y--) {
+            for (int x = cubesArray.length - 1; x >= 0; x--) {
+                for (int z = cubesArray[1][1].length - 1; z >= 0; z--) {
+                    if (cubesExistance[x][y][z] == true) {
+                        finish = cubesArray[x][y][z].getCorrespondingBlock();
+                        stop = true;
+                        break;
+                    }
+                }
+                if (stop) {
+                    break;
+                }
+            }
+            if (stop) {
+                break;
+            }
+        }
+    }
 
     public Block getStart() {
         return start;
@@ -55,6 +93,8 @@ public abstract class Pathfinder {
     }
     
     public abstract ArrayList<Point> getLineGraph();
+    
+     public abstract ArrayList<Block> getBlockGraph();
     
     
 

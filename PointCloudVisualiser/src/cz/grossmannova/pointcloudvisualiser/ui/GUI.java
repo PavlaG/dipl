@@ -15,7 +15,8 @@ import cz.grossmannova.pointcloudvisualiser.models.Graph;
 import cz.grossmannova.pointcloudvisualiser.models.GraphModel;
 import cz.grossmannova.pointcloudvisualiser.models.ModelPointCloud;
 import cz.grossmannova.pointcloudvisualiser.models.SphereModel;
-import cz.grossmannova.pointcloudvisualiser.pathfinding.AlgorithmName;
+import cz.grossmannova.pointcloudvisualiser.pathfinding.AStar;
+import cz.grossmannova.pointcloudvisualiser.pathfinding.Dijkstra;
 import cz.grossmannova.pointcloudvisualiser.pathfinding.Pathfinder;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.BlockMaker;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.BlockMakerType;
@@ -231,15 +232,29 @@ public class GUI extends javax.swing.JFrame {
         Graph graph = new Graph(cubesOctreeBlocks, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ());
         GraphModel graphModel = new GraphModel(graph.getLineGraph()); //momentálně jen body
         // app.sendModelToDraw(graphModel);
-
-        Pathfinder pathfinder = new AlgorithmName(graph);
+//Dijkstra:
+        Pathfinder pathfinder = new Dijkstra(graph);
         pathfinder.randomlySetStartAndFinish();
-        if(pathfinder.findPath()){
-        
+        if(pathfinder.findPath()){       
         GraphModel graphModelForPath = new GraphModel(pathfinder.getLineGraph());
-        app.sendModelToDraw(graphModelForPath);
-        }
-        else System.out.println("nepodařilo se najít konec");
+       // app.sendModelToDraw(graphModelForPath);
+        }  else System.out.println("nepodařilo se najít konec");
+        
+        
+      if(pathfinder.findPath()){       
+        BlockCloudModel blockModelForPath= new BlockCloudModel(pathfinder.getBlockGraph());
+        app.sendModelToDraw(blockModelForPath);
+        }  else System.out.println("nepodařilo se najít konec");
+    
+      //AStar
+       Pathfinder pathfinder2 = new AStar(graph);
+        pathfinder2.randomlySetStartAndFinish();
+        if(pathfinder2.findPath()){       
+        GraphModel graphModelForPath2 = new GraphModel(pathfinder2.getLineGraph());
+        app.sendModelToDraw(graphModelForPath2);
+        }  else System.out.println("nepodařilo se najít konec");
+        
+      
         SphereModel start = new SphereModel(pathfinder.getStart().getCenter());
         app.sendModelToDraw(start);
         SphereModel finish = new SphereModel(pathfinder.getFinish().getCenter());

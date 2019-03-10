@@ -18,7 +18,7 @@ public class SphereModel extends Model {
 
     private int listId = -1;
     private Sphere nodeVisualization = new Sphere();
-    private float offset = 0.5f;
+    private float offset = 0f;//0.5f;
 
     public SphereModel(Point point) {
         super(point);
