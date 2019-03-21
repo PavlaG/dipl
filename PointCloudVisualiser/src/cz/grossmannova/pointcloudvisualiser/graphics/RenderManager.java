@@ -14,12 +14,16 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.opengl.Util;
 import org.lwjgl.util.glu.GLU;
 
@@ -29,13 +33,14 @@ import org.lwjgl.util.glu.GLU;
  */
 public class RenderManager {
 
-    public final int width = 1040;
-    public final int height = 800;
+    //private final int width = 1040;
+    //private final int height = 800;
 
-   // private float ambientColor[] = {0, 0, 0, 1.0f};
+    // private float ambientColor[] = {0, 0, 0, 1.0f};
     private int shaderProgram;
     private int vertexShader;
     private int fragmentShader;
+    private Canvas canvas;
 
 //    private FloatBuffer ambientColorBuffer;
 //    private FloatBuffer lightPositionBuffer;
@@ -47,22 +52,28 @@ public class RenderManager {
 //    private float whiteLight[] = {1, 1, 1, 1};
 //    private float b[] = {0, 0, 0, 1};
 //    private FloatBuffer bBuffer;
-
     public void createDisplay(Canvas canvas) {
+        this.canvas = canvas;
         try {
             Display.setParent(canvas);
-            Display.setDisplayMode(new DisplayMode(width, height));
+            System.out.println("Init Resolution: " + canvas.getWidth() + ":"+ canvas.getHeight());
+            Display.setDisplayMode(new DisplayMode(canvas.getWidth(), canvas.getHeight()));
+           
             Display.setTitle("App");
-            Display.create();
+            ContextAttribs attribs = new ContextAttribs();
+            Display.create(new PixelFormat().withSamples(2), attribs);
+            Display.setInitialBackground(0, 0, 0);
         } catch (LWJGLException ex) {
             Logger.getLogger(RenderManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void inicialization() {
+        GL11.glEnable(GL13.GL_MULTISAMPLE);
+        GL11.glViewport(0, 0, canvas.getWidth(), canvas.getHeight());
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GLU.gluPerspective(70f, width / (float) height, 0.1f, height);
+        GLU.gluPerspective(70f, canvas.getWidth() / (float) canvas.getHeight(), 0.1f, canvas.getHeight());
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
         GL11.glClearColor(0, 0, 0, 0);
@@ -121,7 +132,6 @@ public class RenderManager {
         GL20.glLinkProgram(shaderProgram);
         GL20.glValidateProgram(shaderProgram);
 
-
         GL11.glShadeModel(GL11.GL_SMOOTH);
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_LIGHT0);
@@ -140,8 +150,6 @@ public class RenderManager {
         return buffer;
     }
 
-
-
     public void testError() {
         int err = GL11.glGetError();
         if (err != 0) {
@@ -149,13 +157,21 @@ public class RenderManager {
             System.out.println(Util.translateGLErrorString(err));
         }
     }
+    
+    public void resize() {
+        GL11.glViewport(0, 0, canvas.getWidth(), canvas.getHeight());
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GLU.gluPerspective(70f, canvas.getWidth() / (float) canvas.getHeight(), 0.1f, canvas.getHeight());
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+    }
 
     public void render(Camera camera, List<Model> models) {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glLoadIdentity();
-        
+
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, asFloatBuffer(new float[]{0, 0, 0, 1}));
-        
+
         camera.applyTransformations();
 
         GL11.glPushMatrix();
@@ -173,31 +189,57 @@ public class RenderManager {
         GL20.glDeleteShader(fragmentShader);
         Display.destroy();
     }
-
-    public void doScreenshot() {
-        ByteBuffer pixels = BufferUtils.createByteBuffer(width * height * 3);
-        GL11.glReadPixels(0, 0, width, height, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
-        BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        byte[] array = new byte[width * height * 3];
+    
+    public void prepareForScreenshot() {
+        GL11.glViewport(0, 0, 1920, 1080);
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GLU.gluPerspective(70f, 1920 / (float) 1080, 0.1f, 1080);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+    }
+    
+    public BufferedImage doScreenshotFHD() {
+        ByteBuffer pixels = BufferUtils.createByteBuffer(1920 * 1080 * 3);
+        GL11.glReadPixels(0, 0, 1920, 1080, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
+        BufferedImage bufImg = new BufferedImage(1920, 1080, BufferedImage.TYPE_INT_ARGB);
+        byte[] array = new byte[1920 * 1080 * 3];
         pixels.get(array);
-        int[] intArray = new int[width * height];
+        int[] intArray = new int[1920 * 1080];
         int i = 0;
         int j = 0;
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                i = x + width * y;
-                j = x + width * (height - y - 1);
+        for (int x = 0; x < 1920; x++) {
+            for (int y = 0; y < 1080; y++) {
+                i = x + 1920 * y;
+                j = x + 1920 * (1080 - y - 1);
                 intArray[j] = ByteUtils.colorByteToInt(array[i * 3], array[i * 3 + 1], array[i * 3 + 2]);
             }
 
         }
-        bufImg.setRGB(0, 0, width, height, intArray, 0, width);
-        try {
-            ImageIO.write(bufImg, "PNG", new File("abcde.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(RenderManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
+        bufImg.setRGB(0, 0, 1920, 1080, intArray, 0, 1920);
+        return bufImg;
+    }
 
+    public BufferedImage doScreenshot() {
+        ByteBuffer pixels = BufferUtils.createByteBuffer(canvas.getWidth() * canvas.getHeight() * 3);
+        GL11.glReadPixels(0, 0, canvas.getWidth(), canvas.getHeight(), GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
+        BufferedImage bufImg = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        byte[] array = new byte[canvas.getWidth() * canvas.getHeight() * 3];
+        pixels.get(array);
+        int[] intArray = new int[canvas.getWidth() * canvas.getHeight()];
+        int i = 0;
+        int j = 0;
+        for (int x = 0; x < canvas.getWidth(); x++) {
+            for (int y = 0; y < canvas.getHeight(); y++) {
+                i = x + canvas.getWidth() * y;
+                j = x + canvas.getWidth() * (canvas.getHeight() - y - 1);
+                intArray[j] = ByteUtils.colorByteToInt(array[i * 3], array[i * 3 + 1], array[i * 3 + 2]);
+            }
+
+        }
+        
+        bufImg.setRGB(0, 0, canvas.getWidth(), canvas.getHeight(), intArray, 0, canvas.getWidth());
+        return bufImg;
     }
 
 }

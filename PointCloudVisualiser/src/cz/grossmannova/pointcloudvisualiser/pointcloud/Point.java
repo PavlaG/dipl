@@ -58,9 +58,17 @@ public class Point {
         exists = p.isExists();
         visited = p.isVisited();
     }
+    
+    public Point(Point p, int a) {
+        coords.set(p.getCoords());
+        exists = p.isExists();
+        visited = p.isVisited();
+        correspondingBlock= p.getCorrespondingBlock();
+    }
 
     public Point(String input) {
-        String[] split = input.split(";");
+        input=input.substring(2);
+        String[] split = input.split(" ");
         coords.set(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
     }
 

@@ -2,7 +2,10 @@ package cz.grossmannova.pointcloudvisualiser.models;
 
 import cz.grossmannova.pointcloudvisualiser.pointcloud.Point;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Vector3f;
@@ -11,8 +14,10 @@ public class ModelPointCloud extends Model {
 
     private List<Point> pointsListNormalised = new ArrayList<>();
     private List<Point> pointsListScaled = new ArrayList<>();
+    private List<Point> help = new ArrayList<>();
+    private List<Point> help2 = new ArrayList<>();
     private List<Point> pointsListRounded = new ArrayList<>();
-
+//private List<Vector3f> colors= new ArrayList<>();
     private float minX, minY, minZ, maxX, maxY, maxZ; //není stále aktuální, dobře je po zavolání fce moveCornerOfObjectToCoords000()
 
     private int listId = -1;
@@ -28,11 +33,32 @@ public class ModelPointCloud extends Model {
         //createSetOfContoursNew();
 
         //fillModelWithCubes();
-        super.pointsList = pointsListRounded;
+        
+       // super.colors=colors;
+      //  Collections.sort(pointsList);
+      help=pointsListRounded;
+     
+        for (int i = 0; i < pointsListRounded.size(); i++) {
+            for (int j = 0; j < i; j++) {
+                if(pointsListRounded.get(i).equals(pointsListRounded.get(j))){
+                    System.out.println("removing");
+                    help.remove(pointsListRounded.get(i));
+                }
+            }
+            for (int j = i+1; j < pointsListRounded.size(); j++) {
+                if(pointsListRounded.get(i).equals(pointsListRounded.get(j))){
+                     System.out.println("removing");
+                    help.remove(pointsListRounded.get(i));
+                }
+            }
+        }
+        super.pointsList =help;
+        //super.pointsList = pointsListRounded;
     }
 
     @Override
     public void draw() {
+        if(isVisible()){
         GL11.glPointSize(4);
         GL11.glColor3f(0.85f, 0.0f, 0.0f);
         GL20.glUseProgram(0);
@@ -51,7 +77,7 @@ public class ModelPointCloud extends Model {
         }
 
         GL11.glEnable(GL11.GL_LIGHTING);
-    }
+    }}
 
     private void normalise() {
         maxX = minX = pointsList.get(0).getCoords().getX();
@@ -97,7 +123,7 @@ public class ModelPointCloud extends Model {
 
     private void scale() {
         //pak se bude zadávat uživatelem, teď natvrdo:
-        int scale = 40;
+        int scale = 30;
         for (Point point : pointsListNormalised) {
             pointsListScaled.add(new Point(
                     point.getCoords().getX() * scale,
@@ -201,6 +227,11 @@ public class ModelPointCloud extends Model {
 //    private float countDistanceBetween2Points(Point p1, Point p2) {
 //        return (float) Math.sqrt(Math.pow(p1.getCoords().getX() - p2.getCoords().getX(), 2) + Math.pow(p1.getCoords().getY() - p2.getCoords().getY(), 2) + Math.pow(p1.getCoords().getZ() - p2.getCoords().getZ(), 2));
 //    }
+    
+    
+    
+    
+    
     private float countDistanceBetween2PointsIn2D(Point p1, Point p2) {
         return (float) Math.sqrt(Math.pow(p1.getCoords().getX() - p2.getCoords().getX(), 2) + Math.pow(p1.getCoords().getZ() - p2.getCoords().getZ(), 2));
     }
@@ -220,5 +251,11 @@ public class ModelPointCloud extends Model {
     public float getMaxZ() {
         return maxZ;
     }
+
+//    public List<Vector3f> getColors() {
+//        return colors;
+//    }
+    
+    
 
 }

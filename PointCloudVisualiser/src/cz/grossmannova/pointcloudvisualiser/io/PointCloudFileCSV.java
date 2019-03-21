@@ -24,6 +24,7 @@ public class PointCloudFileCSV extends PointCloudFile {
     private FileInputStream fis = null;
     private InputStreamReader isr = null;
     private BufferedReader br = null;
+    private List<Point> list2=new ArrayList<>();
 
     public PointCloudFileCSV(String pathname) {
         super(pathname);
@@ -63,6 +64,7 @@ public class PointCloudFileCSV extends PointCloudFile {
         if (line == null) {
             return null;
         }
+       
         return new Point(line);
     }
 
@@ -79,11 +81,46 @@ public class PointCloudFileCSV extends PointCloudFile {
     public List<Point> readPoints() {
         List<Point> list = new ArrayList<>();
         Point point = null;
-        while ((point = this.readPoint()) != null) {
-            list.add(point);
-        }
+//        while ((point = this.readPoint()) != null) {
+//            list.add(point);
+//        }
+
+while(this.readLine()!=0){
+   // list.add(point);
+}
         close();
-        return list;
+       // return list;
+       return list2;
     }
 
+     public int readLine() {
+        String line = null;
+        if (fis == null) {
+            try {
+                fis = new FileInputStream(this);
+
+                isr = new InputStreamReader(fis);
+                br = new BufferedReader(isr);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(PointCloudFileCSV.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        try {
+            line = br.readLine();
+        } catch (IOException ex) {
+            Logger.getLogger(PointCloudFileCSV.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
+        }
+        if (line == null) {
+            return 0;
+        }
+        if(line.startsWith("v ")){
+           
+            list2.add(new Point(line));
+            return 1;
+        }
+       return -1;
+        
+    }
+    
 }

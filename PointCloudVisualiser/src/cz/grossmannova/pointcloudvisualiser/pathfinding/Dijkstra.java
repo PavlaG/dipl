@@ -28,7 +28,7 @@ public class Dijkstra extends Pathfinder {
 
     @Override
     public boolean findPath() {
-
+resetValues();
         start.setStartDistance(0);
         start.countFinishDistance(finish);
         start.setPreviousBlock(null);
@@ -37,8 +37,13 @@ public class Dijkstra extends Pathfinder {
         Block current = new Block();
         current = start;
         while (!finishFound) {
+            steps++;
             current = unvisited.poll();
             if (current.getStartDistance() >= (Integer.MAX_VALUE)) {
+                start.myString();
+                finish.myString();
+                System.out.println("size: "+ blocks.size());
+                System.out.println("prob. zde");
                 return false;
             }
             if (current.equals(finish)) {
@@ -69,11 +74,15 @@ public class Dijkstra extends Pathfinder {
     }
 
     public ArrayList<Point> getLineGraph() {
+        System.out.println("tart: "+ start.toString());
+        System.out.println("finish"+ finish.toString());
         ArrayList<Point> path = new ArrayList<>();
         Block b = finish;
         path.add(b.getCenter());
         b = b.getPreviousBlock();
         while (!b.equals(start)) {
+            System.out.println("b: "+ b.toString());
+            System.out.println("b prev: "+ b.getPreviousBlock().toString());
             path.add(b.getCenter());
             path.add(b.getCenter());
             b = b.getPreviousBlock();
@@ -92,5 +101,11 @@ public class Dijkstra extends Pathfinder {
         }
         path.add(start);
         return path;
+    }
+
+    private void resetValues() {
+        for (Block block : blocks) {
+           block.resetSomething();
+        }
     }
 }

@@ -10,6 +10,7 @@ import cz.grossmannova.pointcloudvisualiser.models.Graph;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.Point;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -24,6 +25,7 @@ public abstract class Pathfinder {
     protected Block finish;
     protected boolean[][][] cubesExistance;
     protected Point[][][] cubesArray;
+    protected int steps = 0;
 
     public Pathfinder(Graph graph) {
         this.graph = graph;
@@ -36,7 +38,8 @@ public abstract class Pathfinder {
 
     public abstract boolean findPath();
 
-   public void randomlySetStartAndFinish() {
+    public void randomlySetStartAndFinish() {
+        System.out.println("aaaaaaaaaaaaaaaaaa");
         boolean stop = false;
         for (int y = 0; y < cubesArray[1].length; y++) {
             for (int x = 0; x < cubesArray.length; x++) {
@@ -55,10 +58,10 @@ public abstract class Pathfinder {
                 break;
             }
         }
-
+        System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
         stop = false;
-        for (int y = cubesArray[1].length - 7; y >= 0; y--) {
-            for (int x = cubesArray.length - 1; x >= 0; x--) {
+        for (int y = cubesArray[1].length - 1; y >= 0; y--) { //-1
+            for (int x = cubesArray.length - 1; x >= 0; x--) { //-1
                 for (int z = cubesArray[1][1].length - 1; z >= 0; z--) {
                     if (cubesExistance[x][y][z] == true) {
                         finish = cubesArray[x][y][z].getCorrespondingBlock();
@@ -74,6 +77,40 @@ public abstract class Pathfinder {
                 break;
             }
         }
+        System.out.println("weeeeeeeeeeee");
+    }
+
+    public void resetStartAndFinish() {
+        boolean stop = false;
+        int x, y, z;
+        Random r = new Random();
+        start = null;
+        finish = null;
+        while (stop == false) {
+            y = r.nextInt(cubesArray[1].length);
+            x = r.nextInt(cubesArray.length);
+            z = r.nextInt(cubesArray[1][1].length);
+            if (cubesExistance[x][y][z] == true) {
+                start = cubesArray[x][y][z].getCorrespondingBlock();
+                stop = true;
+
+            }
+        }
+        stop = false;
+        while (stop == false) {
+            //Random r = new Random();
+            y = r.nextInt(cubesArray[1].length - 1);
+            x = r.nextInt(cubesArray.length - 1);
+            z = r.nextInt(cubesArray[1][1].length - 1);
+            if (cubesExistance[x][y][z] == true && !cubesArray[x][y][z].getCorrespondingBlock().equals(start)) {
+                finish = cubesArray[x][y][z].getCorrespondingBlock();
+                stop = true;
+
+            }
+        }
+
+        System.out.println("start: x:" + start.getCenter().getCoords().x + "y:" + start.getCenter().getCoords().y + "z:" + start.getCenter().getCoords().z);
+        System.out.println("finish: x:" + finish.getCenter().getCoords().x + "y:" + start.getCenter().getCoords().y + "z:" + start.getCenter().getCoords().z);
     }
 
     public Block getStart() {
@@ -91,11 +128,13 @@ public abstract class Pathfinder {
     public void setFinish(Block finish) {
         this.finish = finish;
     }
-    
+
     public abstract ArrayList<Point> getLineGraph();
-    
-     public abstract ArrayList<Block> getBlockGraph();
-    
-    
+
+    public abstract ArrayList<Block> getBlockGraph();
+
+    public void printSteps() {
+        System.out.println("steps: " + steps);
+    }
 
 }

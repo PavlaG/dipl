@@ -2,22 +2,27 @@ package cz.grossmannova.pointcloudvisualiser.pointcloud;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import org.lwjgl.util.vector.Vector3f;
 
 /**
  *
  * @author Pavla
  */
 public class CubesMaker {
+private long time, startTime, endTime;
 
     private ArrayList<ArrayList<ArrayList<Point>>> contours;
     private final float maxZ;
-
+    private int amountOfCubes=0;
+private List<Vector3f> colors= new ArrayList<>();
     public CubesMaker(ArrayList<ArrayList<ArrayList<Point>>> contours, float maxZ) {
         this.contours = contours;
         this.maxZ = maxZ;
     }
 
     public List<Point> generate() {
+        startTime=System.currentTimeMillis();
         List<Point> cubesPoints = new ArrayList<>();
         for (int y = 0; y < contours.size(); y++) {
             ArrayList<ArrayList<Point>> level = contours.get(y);
@@ -38,6 +43,13 @@ public class CubesMaker {
                 }
             }
         }
+        
+        Random r= new Random();      
+        for (Point point : cubesPoints) {           
+            colors.add(new Vector3f(r.nextFloat(), r.nextFloat(), r.nextFloat()));
+        }
+        endTime=System.currentTimeMillis();
+        time=endTime-startTime;
         return cubesPoints;
     }
 
@@ -60,4 +72,22 @@ public class CubesMaker {
     private boolean isBetween(float a, float b, int c) {
         return (a <= c && b >= c) || (a >= c && b <= c);
     }
+
+    public List<Vector3f> getColors() {
+        return colors;
+    }
+
+    public int getAmountOfCubes() {
+        return amountOfCubes;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+    
+    
 }

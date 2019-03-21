@@ -12,13 +12,14 @@ public class ContourMaker {
     private List<Point> pointsList;
     private ArrayList<ArrayList<ArrayList<Point>>> contours = new ArrayList<>(); //seznam seznamu seznamů bodů, které reprezentují několik kontur pro danou hodnotu y
     private final float maxY;
-
+private long time, startTime, endTime;
     public ContourMaker(List<Point> pointsList, float maxY) {
         this.pointsList = pointsList;
         this.maxY = maxY;
     }
 
     public ArrayList<ArrayList<ArrayList<Point>>> generate() {
+          startTime=System.currentTimeMillis();
         Point currentPoint;
         float distanceFromCurrentPoint;
         int currentIndexForContourInSpecifiedLevel = -1;
@@ -107,6 +108,8 @@ public class ContourMaker {
 
         }
         closeUnclosedContours();
+        endTime=System.currentTimeMillis();
+        time=endTime-startTime;
         return contours;
     }
 
@@ -132,5 +135,22 @@ public class ContourMaker {
 
             }
         }
+    }
+    
+    public int getAmountOfContours(){
+        int amount=0;
+         for (ArrayList<ArrayList<Point>> arrayList : contours) {
+            for (ArrayList<Point> contour : arrayList) {
+            amount++;
+            }
+            }
+         return amount;
+    }
+      public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }

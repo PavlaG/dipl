@@ -26,6 +26,7 @@ public class SphereModel extends Model {
 
     @Override
     public void draw() {
+        if(isVisible()){
         GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, 128f);
 
         if (listId == -1) {
@@ -41,5 +42,5 @@ public class SphereModel extends Model {
         }
 
     }
-
+    }
 }

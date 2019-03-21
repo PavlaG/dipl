@@ -24,6 +24,7 @@ public class GraphModel extends Model {
 
     @Override
     public void draw() {
+        if(isVisible()){
         GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, 128f);
         GL11.glColor3f(0.6f, 0.6f, 0.6f);
         GL20.glUseProgram(0);
@@ -45,4 +46,4 @@ public class GraphModel extends Model {
         GL11.glEnable(GL11.GL_LIGHTING);
     }
 
-}
+}}

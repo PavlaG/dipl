@@ -31,13 +31,21 @@ public class Block {
 
     private boolean visited = false;
     float finishDistance = -1;
-    float startDistance=Integer.MAX_VALUE;
-Block previousBlock;//= new Block();
+    float startDistance = Integer.MAX_VALUE;
+    Block previousBlock;//= new Block();
+
     public Block() {
         innerPoints = new ArrayList<>();
         position = new Vector3f();
         size = new Vector3f();
         setColor();
+    }
+
+    public void resetSomething() {
+        visited = false;
+        finishDistance = -1;
+        startDistance = Integer.MAX_VALUE;
+        previousBlock = null;
     }
 
     public Block(List<Point> innerPoints, int sizeX, int sizeY, int sizeZ, Vector3f position) {
@@ -233,13 +241,14 @@ Block previousBlock;//= new Block();
     public void setFinishDistance(float finishDistance) {
         this.finishDistance = finishDistance;
     }
-    
+
     public void countFinishDistance(Block finish) {
-        if(finishDistance==-1){
-        this.finishDistance=(float) Math.sqrt(Math.pow(center.getCoords().x - finish.getCenter().getCoords().x, 2)
-                + Math.pow(center.getCoords().y - finish.getCenter().getCoords().y, 2)
-                + Math.pow(center.getCoords().z - finish.getCenter().getCoords().z, 2));
-    }}
+        if (finishDistance == -1) {
+            this.finishDistance = (float) Math.sqrt(Math.pow(center.getCoords().x - finish.getCenter().getCoords().x, 2)
+                    + Math.pow(center.getCoords().y - finish.getCenter().getCoords().y, 2)
+                    + Math.pow(center.getCoords().z - finish.getCenter().getCoords().z, 2));
+        }
+    }
 
     public float getStartDistance() {
         return startDistance;
@@ -285,18 +294,18 @@ Block previousBlock;//= new Block();
         }
         return true;
     }
-    
-    public void myString(){
+
+    public void myString() {
         System.out.println("///////////////");
-        System.out.println("position: "+ position.toString());
-        System.out.println("size: "+ size.toString());
-        System.out.println("edges:"+ edges.size());
+        System.out.println("position: " + position.toString());
+        System.out.println("size: " + size.toString());
+        System.out.println("edges:" + edges.size());
         for (Edge edge : edges) {
-            System.out.println("   edge: "+ edge.getBlockFrom().center+ " to: "+ edge.getBlockTo().center+ " weight: "+ edge.getWeight());
+            System.out.println("   edge: " + edge.getBlockFrom().center + " to: " + edge.getBlockTo().center + " weight: " + edge.getWeight());
         }
-        System.out.println("neighbours: "+ neighbours.size());
+        System.out.println("neighbours: " + neighbours.size());
         for (Block neighbour : neighbours) {
-            System.out.println("neigh: "+ neighbour.getCenter());
+            System.out.println("neigh: " + neighbour.getCenter());
         }
         System.out.println("////////////////////");
     }

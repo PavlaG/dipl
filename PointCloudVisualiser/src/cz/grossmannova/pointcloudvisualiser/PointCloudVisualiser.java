@@ -12,6 +12,7 @@ import cz.grossmannova.pointcloudvisualiser.pathfinding.Pathfinder;
 import cz.grossmannova.pointcloudvisualiser.ui.GUI;
 import cz.grossmannova.pointcloudvisualiser.utils.LibUtils;
 import java.awt.Canvas;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,11 +33,13 @@ public class PointCloudVisualiser {
     private List<Model> models = new ArrayList<>();
     private boolean guiRequestedClose = false;
     private long lastFrame;
+    private BufferedImage screenshot = null;
     //private int delta;
     private boolean doScreenshot = false;
 //private boolean randomlySetStartAndFinish=false;
 
-private Pathfinder pathfinder;
+    private Pathfinder pathfinder;
+
     public static void main(String[] args) {
 
         PointCloudVisualiser app = new PointCloudVisualiser();
@@ -108,13 +111,19 @@ private Pathfinder pathfinder;
 //                arrayList.add(models.get(2));
 //                renderManager.render(camera, arrayList);
 //            }
+//            if (doScreenshot) {
+//                renderManager.prepareForScreenshot();
+//            } else {
+                renderManager.resize();
+//            }
             renderManager.render(camera, new ArrayList<>(models));
             renderManager.testError();
             if (doScreenshot) {
-                renderManager.doScreenshot();
+                //screenshot = renderManager.doScreenshotFHD();
+                screenshot = renderManager.doScreenshot();
                 doScreenshot = false;
             }
-            
+
 //            if (randomlySetStartAndFinish) {
 //                něco udělat
 //                randomlySetStartAndFinish = false;
@@ -144,8 +153,22 @@ private Pathfinder pathfinder;
         return delta;
     }
 
+    public void deleteAllPathfindingModelsToDraw(List<Model> modelsToDelete) {
+        for (Model model : modelsToDelete) {
+            models.remove(model);
+        }
+    }
+
     public void sendModelToDraw(Model model) {
         models.add(model);
+    }
+
+    public void deleteModelFromModelsToDraw(Model model) {
+        models.remove(model);
+    }
+
+    public void deleteAllModelsFromModelsToDraw() {
+        models.clear();
     }
 
     public boolean isDoScreenshot() {
@@ -155,7 +178,7 @@ private Pathfinder pathfinder;
     public void setDoScreenshot(boolean doScreenshot) {
         this.doScreenshot = doScreenshot;
     }
-    
+
 //    public boolean isRandomlySetStartAndFinish() {
 //        return randomlySetStartAndFinish;
 //    }
@@ -163,5 +186,12 @@ private Pathfinder pathfinder;
 //    public void setRandomlySetStartAndFinish(boolean randomlySetStartAndFinish){
 //        this.randomlySetStartAndFinish=randomlySetStartAndFinish;
 //    }
+    public BufferedImage getScreenshot() {
+        return screenshot;
+    }
+
+    public void setScreenshot(BufferedImage screenshot) {
+        this.screenshot = screenshot;
+    }
 
 }

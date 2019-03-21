@@ -12,7 +12,7 @@ import java.util.Comparator;
  * @author Pavla
  */
 public class AStarBlockComparator implements Comparator<Block> {
-    float weight=1;
+    float weight=0f;
     @Override
     public int compare(Block o1, Block o2) {
          if (o1.startDistance+o1.finishDistance*weight < o2.startDistance+o2.finishDistance*weight) 

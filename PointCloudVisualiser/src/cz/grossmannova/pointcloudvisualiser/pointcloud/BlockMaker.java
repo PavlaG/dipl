@@ -19,12 +19,16 @@ public class BlockMaker {
     private ArrayList<Block> blocks;
     private boolean[][][] cubesExistance;
     private Point[][][] cubesArray;
-
+private long time, startTime, endTime;
     public BlockMaker(List<Point> cubes, float maxX, float maxY, float maxZ, BlockMakerType type) {
-        this.cubes = cubes;
+       this.cubes=new ArrayList<>();
+        for (Point cube : cubes) {
+            this.cubes.add(new Point(cube,1));
+        }
+//       this.cubes = cubes;
         if (type == BlockMakerType.CUBE_EXPANSION || type == BlockMakerType.CUBOID_EXPANSION) {
-            cubesArray = new Point[(int) maxX + 1][(int) maxY + 1][(int) maxZ + 1];
-            cubesExistance = new boolean[(int) maxX + 1][(int) maxY + 1][(int) maxZ + 1];
+            cubesArray = new Point[(int) maxX + 2][(int) maxY + 2][(int) maxZ + 2];
+            cubesExistance = new boolean[(int) maxX + 2][(int) maxY + 2][(int) maxZ + 2];
         }
         if (type == BlockMakerType.OCTREE) {
             float max = Math.max(Math.max(maxX, maxY), maxZ);
@@ -32,7 +36,7 @@ public class BlockMaker {
             cubesArray = new Point[nearestPowOf2][nearestPowOf2][nearestPowOf2];
             cubesExistance = new boolean[nearestPowOf2][nearestPowOf2][nearestPowOf2];
         }
-        turnCubesIntoArray(cubes);
+        turnCubesIntoArray(this.cubes);
         unusedCubeExists = true;
         this.maxX = maxX;
         this.maxY = maxY;
@@ -47,6 +51,7 @@ public class BlockMaker {
     }
 
     public List<Block> generateCubes() {
+        startTime=System.currentTimeMillis();
         blocks = new ArrayList<>();
         for (int y = 0; y <= maxY; y++) {
             for (int x = 0; x <= maxX; x++) {
@@ -57,10 +62,13 @@ public class BlockMaker {
                 }
             }
         }
+        endTime=System.currentTimeMillis();
+        time=endTime-startTime;
         return blocks;
     }
 
     public List<Block> generateCuboids() {
+         startTime=System.currentTimeMillis();
         blocks = new ArrayList<>();
         for (int y = 0; y <= maxY; y++) {
             for (int x = 0; x <= maxX; x++) {
@@ -71,6 +79,8 @@ public class BlockMaker {
                 }
             }
         }
+        endTime=System.currentTimeMillis();
+        time=endTime-startTime;
         return blocks;
     }
 
@@ -88,6 +98,7 @@ public class BlockMaker {
             for (int z = (int) point.getCoords().getZ(); z <= (int) point.getCoords().getZ() + step; z++) {
                 for (int y = (int) point.getCoords().getY(); y <= (int) point.getCoords().getY() + step; y++) {
                     Point currentPoint = new Point(point.getCoords().getX() + step, y, z);
+                  //  System.out.println((y) + " compared " + (cubesExistance[(int) point.getCoords().getX() + step].length));
                     if (cubesExistance[(int) point.getCoords().getX() + step][y][z] == true) {
                         cubeBuffer.add(currentPoint);
                     } else {
@@ -242,6 +253,7 @@ public class BlockMaker {
     }
 
     public List<Block> generateCubesThroughOctree() {
+         startTime=System.currentTimeMillis();
         ArrayList<Point> cubeBuffer = new ArrayList<>();
         boolean somethingIsEmpty = false;
         boolean somethingIsFull = false;
@@ -307,7 +319,10 @@ public class BlockMaker {
                 somethingIsFull = false;
             }
         }
+         endTime=System.currentTimeMillis();
+        time=endTime-startTime;
         return blocks;
+    
     }
 
     public static int nearestPowOf2(int number) {
@@ -318,6 +333,10 @@ public class BlockMaker {
             }
         }
         return 0;
+    }
+
+    public long getTime() {
+        return time;
     }
 
 }
