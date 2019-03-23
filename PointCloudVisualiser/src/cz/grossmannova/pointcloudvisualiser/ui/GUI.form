@@ -180,9 +180,9 @@
                                           <Component id="radPathfinCuboids" alignment="0" max="32767" attributes="0"/>
                                       </Group>
                                       <Component id="butPathfinding" alignment="0" min="-2" pref="231" max="-2" attributes="0"/>
-                                      <Component id="butResetPoints" alignment="0" min="-2" pref="191" max="-2" attributes="0"/>
+                                      <Component id="warningLabel" alignment="0" min="-2" pref="257" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="0" pref="47" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="21" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -203,8 +203,8 @@
                           <Component id="radPathfinCuboids" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="radPathfinCubesOctree" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Component id="butResetPoints" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="warningLabel" pref="21" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -230,6 +230,9 @@
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="Cesta bloky"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="radPathBlocksActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="radPathfinCubes">
                   <Properties>
@@ -250,6 +253,9 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="Kv&#xe1;dry"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="radPathfinCuboidsActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="radPathfinCubesOctree">
                   <Properties>
@@ -258,6 +264,9 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="Krychle skrz okt&#xe1;lov&#xfd; strom"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="radPathfinCubesOctreeActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="butPathfinding">
                   <Properties>
@@ -267,13 +276,7 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butPathfindingActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="butResetPoints">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Resetovat body"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butResetPointsActionPerformed"/>
-                  </Events>
+                <Component class="javax.swing.JLabel" name="warningLabel">
                 </Component>
               </SubComponents>
             </Container>

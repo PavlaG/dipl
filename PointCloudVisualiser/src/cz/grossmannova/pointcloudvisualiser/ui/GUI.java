@@ -24,6 +24,7 @@ public class GUI extends javax.swing.JFrame {
     private final PointCloudVisualiser app;
     private Service service;
     private BufferedImage screenshot = null;
+    private boolean butPathfindingWasUsed;
 
     /**
      * Creates new form GUI
@@ -56,7 +57,7 @@ public class GUI extends javax.swing.JFrame {
         radPathfinCuboids = new javax.swing.JRadioButton();
         radPathfinCubesOctree = new javax.swing.JRadioButton();
         butPathfinding = new javax.swing.JButton();
-        butResetPoints = new javax.swing.JButton();
+        warningLabel = new javax.swing.JLabel();
         butImport = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         radContours = new javax.swing.JRadioButton();
@@ -147,6 +148,11 @@ public class GUI extends javax.swing.JFrame {
         butGroupPathfinding.add(radPathBlocks);
         radPathBlocks.setSelected(true);
         radPathBlocks.setText("Cesta bloky");
+        radPathBlocks.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radPathBlocksActionPerformed(evt);
+            }
+        });
 
         butGroupPathfndingSpace.add(radPathfinCubes);
         radPathfinCubes.setSelected(true);
@@ -159,21 +165,24 @@ public class GUI extends javax.swing.JFrame {
 
         butGroupPathfndingSpace.add(radPathfinCuboids);
         radPathfinCuboids.setText("Kvádry");
+        radPathfinCuboids.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radPathfinCuboidsActionPerformed(evt);
+            }
+        });
 
         butGroupPathfndingSpace.add(radPathfinCubesOctree);
         radPathfinCubesOctree.setText("Krychle skrz oktálový strom");
+        radPathfinCubesOctree.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radPathfinCubesOctreeActionPerformed(evt);
+            }
+        });
 
         butPathfinding.setText("Demonstrace hledání cesty");
         butPathfinding.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 butPathfindingActionPerformed(evt);
-            }
-        });
-
-        butResetPoints.setText("Resetovat body");
-        butResetPoints.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butResetPointsActionPerformed(evt);
             }
         });
 
@@ -196,8 +205,8 @@ public class GUI extends javax.swing.JFrame {
                                 .addComponent(radPathfinCubesOctree, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(radPathfinCuboids, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(butPathfinding, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(butResetPoints, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 47, Short.MAX_VALUE))))
+                            .addComponent(warningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 21, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,8 +223,8 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(radPathfinCuboids)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(radPathfinCubesOctree)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(butResetPoints)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(warningLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -438,31 +447,71 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_radPointsActionPerformed
 
     private void radPathLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radPathLineActionPerformed
-        // TODO add your handling code here:
+//        service.getBlockModelForPathCubes().setVisible(false);
+//        service.getGraphModelForPathCubes().setVisible(true);
+//        service.getStart().setVisible(true);
+//        service.getFinish().setVisible(true);
+        buttonsIfElse();
     }//GEN-LAST:event_radPathLineActionPerformed
 
     private void butPathfindingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butPathfindingActionPerformed
+        butPathfindingWasUsed = true;
         if (service != null) {
             if (radCubesOctree.isSelected() || radCuboids.isSelected() || radCubes.isSelected() || radTinyCubes.isSelected()) {
-                //service.setVisibility(service.getModelPointCloud());
                 radPoints.setSelected(true);
                 service.setVisibility(service.getModelPointCloud());
             }
 
-            if (radPathfinCubes.isSelected()) {
-                service.graphAndSoOn(service.getCubeBlocks(), radPathLine.isSelected());
+            if (service.graphAndSoOn2()) {
+                warningLabel.setText("");
+                if (!service.isSameBlock()) {
 
-            } else if (radPathfinCuboids.isSelected()) {
-                service.graphAndSoOn(service.getCuboidBlocks(), radPathLine.isSelected());
-            } else if (radPathfinCubesOctree.isSelected()) {
-                service.graphAndSoOn(service.getCubesOctreeBlocks(), radPathLine.isSelected());
+                    if (radPathfinCubes.isSelected()) {
+                        // service.graphAndSoOn(service.getCubeBlocks(), radPathLine.isSelected());
+                        if (radPathBlocks.isSelected()) {
+                            service.getBlockModelForPathCubes().setVisible(true);
+                            service.getStartCubes().setVisible(false);
+                            service.getFinishCubes().setVisible(false);
+                        } else {
+                            service.getGraphModelForPathCubes().setVisible(true);
+                            service.getStartCubes().setVisible(true);
+                            service.getFinishCubes().setVisible(true);
+                        }
+                    } else if (radPathfinCuboids.isSelected()) {
+                        //service.graphAndSoOn(service.getCuboidBlocks(), radPathLine.isSelected());
+                        if (radPathBlocks.isSelected()) {
+                            service.getBlockModelForPathCuboids().setVisible(true);
+                            service.getStartCuboids().setVisible(false);
+                            service.getFinishCuboids().setVisible(false);
+                        } else {
+                            service.getGraphModelForPathCuboids().setVisible(true);
+                            service.getStartCuboids().setVisible(true);
+                            service.getFinishCuboids().setVisible(true);
+                        }
+                    } else if (radPathfinCubesOctree.isSelected()) {
+
+                        if (radPathBlocks.isSelected()) {
+                            service.getBlockModelForPathCubesOctree().setVisible(true);
+                            service.getStartCubesOctree().setVisible(false);
+                            service.getFinishCubesOctree().setVisible(false);
+                        } else {
+                            service.getGraphModelForPathCubesOctree().setVisible(true);
+                            service.getStartCubesOctree().setVisible(true);
+                            service.getFinishCubesOctree().setVisible(true);
+                        }
+                        //service.graphAndSoOn(service.getCubesOctreeBlocks(), radPathLine.isSelected());
+                    }
+                } else {
+                    warningLabel.setText("Start a cíl se nacházají ve stejném bloku, opakujte pokus.");
+                }
+            } else {
+                warningLabel.setText("Cesta mezi těmito bloky neexistuje.");
             }
-
         }
     }//GEN-LAST:event_butPathfindingActionPerformed
 
     private void radPathfinCubesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radPathfinCubesActionPerformed
-        // TODO add your handling code here:
+        buttonsIfElse();
     }//GEN-LAST:event_radPathfinCubesActionPerformed
 
     private void fileSaverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaverActionPerformed
@@ -481,9 +530,75 @@ public class GUI extends javax.swing.JFrame {
         screenshot = null;
     }//GEN-LAST:event_fileSaverActionPerformed
 
-    private void butResetPointsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butResetPointsActionPerformed
-     service.getPathfinder().resetStartAndFinish();
-    }//GEN-LAST:event_butResetPointsActionPerformed
+    private void radPathBlocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radPathBlocksActionPerformed
+//        //if(radPathBlocks.isSelected()){
+//        service.getGraphModelForPathCubes().setVisible(false);
+//        service.getBlockModelForPathCubes().setVisible(true);
+//        service.getStart().setVisible(false);
+//        service.getFinish().setVisible(false);
+//        // }
+        buttonsIfElse();
+    }//GEN-LAST:event_radPathBlocksActionPerformed
+
+    private void buttonsIfElse() {
+        service.setAllPathfindingModelsToUnvisible();
+        if (butPathfindingWasUsed) {
+            warningLabel.setText("");
+            if (!service.isSameBlock()) {
+
+                if (service.isPathFound()) {
+
+                    if (radPathfinCubes.isSelected()) {
+                        // service.graphAndSoOn(service.getCubeBlocks(), radPathLine.isSelected());
+                        if (radPathBlocks.isSelected()) {
+                            service.getBlockModelForPathCubes().setVisible(true);
+                            service.getStartCubes().setVisible(false);
+                            service.getFinishCubes().setVisible(false);
+                        } else {
+                            service.getGraphModelForPathCubes().setVisible(true);
+                            service.getStartCubes().setVisible(true);
+                            service.getFinishCubes().setVisible(true);
+                        }
+                    } else if (radPathfinCuboids.isSelected()) {
+                        //service.graphAndSoOn(service.getCuboidBlocks(), radPathLine.isSelected());
+                        if (radPathBlocks.isSelected()) {
+                            service.getBlockModelForPathCuboids().setVisible(true);
+                            service.getStartCuboids().setVisible(false);
+                            service.getFinishCuboids().setVisible(false);
+                        } else {
+                            service.getGraphModelForPathCuboids().setVisible(true);
+                            service.getStartCuboids().setVisible(true);
+                            service.getFinishCuboids().setVisible(true);
+                        }
+                    } else if (radPathfinCubesOctree.isSelected()) {
+
+                        if (radPathBlocks.isSelected()) {
+                            service.getBlockModelForPathCubesOctree().setVisible(true);
+                            service.getStartCubesOctree().setVisible(false);
+                            service.getFinishCubesOctree().setVisible(false);
+                        } else {
+                            service.getGraphModelForPathCubesOctree().setVisible(true);
+                            service.getStartCubesOctree().setVisible(true);
+                            service.getFinishCubesOctree().setVisible(true);
+                        }
+                        //service.graphAndSoOn(service.getCubesOctreeBlocks(), radPathLine.isSelected());
+                    }
+                } else {
+                    warningLabel.setText("Cesta mezi těmito bloky neexistuje.");
+                }
+            } else {
+                warningLabel.setText("Start a cíl se nacházají ve stejném bloku, opakujte pokus.");
+            }
+        }
+    }
+
+    private void radPathfinCuboidsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radPathfinCuboidsActionPerformed
+        buttonsIfElse();
+    }//GEN-LAST:event_radPathfinCuboidsActionPerformed
+
+    private void radPathfinCubesOctreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radPathfinCubesOctreeActionPerformed
+        buttonsIfElse();
+    }//GEN-LAST:event_radPathfinCubesOctreeActionPerformed
 
     private void loadObject(String path) {
         app.deleteAllModelsFromModelsToDraw();
@@ -491,7 +606,7 @@ public class GUI extends javax.swing.JFrame {
         service = new Service(path, app);
 
         service.inicialisation();
-        
+
         txtTinyCubesNum.setText(Integer.toString(service.getCubes().size()));
         txtCubesNum.setText(Integer.toString(service.getCubeBlocks().size()));
         txtCuboidsNum.setText(Integer.toString(service.getCuboidBlocks().size()));
@@ -503,7 +618,7 @@ public class GUI extends javax.swing.JFrame {
         txtOctreeTime.setText(Long.toString(service.getCubesOctreeBlockMaker().getTime() + service.getCubesMaker().getTime()));
         txtPointsNum.setText(Integer.toString(service.getModelPointCloud().getPointsList().size()));
         txtContoursNum.setText(Integer.toString(service.getContourMaker().getAmountOfContours()));
-         txtContoursTime.setText(Long.toString(service.getContourMaker().getTime()));
+        txtContoursTime.setText(Long.toString(service.getContourMaker().getTime()));
         radPoints.setSelected(true);
         radPathBlocks.setSelected(true);
         radPathfinCubes.setSelected(true);
@@ -516,7 +631,6 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.ButtonGroup butGroupProjection;
     private javax.swing.JButton butImport;
     private javax.swing.JButton butPathfinding;
-    private javax.swing.JButton butResetPoints;
     private javax.swing.JFileChooser fileOpener;
     private javax.swing.JFileChooser fileSaver;
     private java.awt.Canvas graphicsCanvas;
@@ -549,5 +663,6 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel txtPointsNum;
     private javax.swing.JLabel txtTinyCubesNum;
     private javax.swing.JLabel txtTinyCubesTime;
+    private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables
 }
