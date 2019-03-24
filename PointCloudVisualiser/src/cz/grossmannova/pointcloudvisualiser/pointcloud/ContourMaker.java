@@ -13,12 +13,15 @@ public class ContourMaker {
     private ArrayList<ArrayList<ArrayList<Point>>> contours = new ArrayList<>(); //seznam seznamu seznamů bodů, které reprezentují několik kontur pro danou hodnotu y
     private final float maxY;
 private long time, startTime, endTime;
-    public ContourMaker(List<Point> pointsList, float maxY) {
+int distanceLimit;
+    public ContourMaker(List<Point> pointsList, float maxY, int distanceLimit) {
         this.pointsList = pointsList;
         this.maxY = maxY;
+        this.distanceLimit=distanceLimit;
     }
 
     public ArrayList<ArrayList<ArrayList<Point>>> generate() {
+        System.out.println("distance Limit: "+ distanceLimit);
           startTime=System.currentTimeMillis();
         Point currentPoint;
         float distanceFromCurrentPoint;
@@ -27,9 +30,9 @@ private long time, startTime, endTime;
         Point nearestPointToCurrentPoint = new Point();
         boolean nearestPointSet = false;
         boolean doNextRound = true;
-        float distanceLimit = 18; //tohle se pak bude někde uživatelsky nastavovat?
+        //float distanceLimit = 18; //tohle se pak bude někde uživatelsky nastavovat?
         ArrayList<ArrayList<Point>> pointsAccordintToLevels = new ArrayList<>(); //vytvoření hlavního seznamu, který bude obsahovat seznamy bodů pro danou hodnotu y
-        Point firstPointInContour;
+        //Point firstPointInContour;
         for (int y = 0; y <= maxY; y++) {
             pointsAccordintToLevels.add(new ArrayList<>()); //
             contours.add(new ArrayList<ArrayList<Point>>());
@@ -60,17 +63,21 @@ private long time, startTime, endTime;
                         if (i > 2) {
                             if (!point.equals(currentPoint) && (point.isVisited() == false || point.equals(contours.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).get(0)))) {
                                 distanceFromCurrentPoint = countDistanceBetween2PointsIn2D(currentPoint, point);
-                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint //&& distanceFromCurrentPoint < distanceLimit
+                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint && distanceFromCurrentPoint < distanceLimit 
                                         ) {
+                                    //System.out.println("distance and second limit used");
                                     minDistanceFromCurrentPoint = distanceFromCurrentPoint;
                                     nearestPointToCurrentPoint = point;
                                     nearestPointSet = true;
                                 }
+//                                 if(distanceFromCurrentPoint < distanceLimit ){
+//                                    System.out.println("distanceLimitUsed");
+//                                }
                             }
                         } else if (i <= 2) {
                             if (!point.equals(currentPoint) && point.isVisited() == false) {
                                 distanceFromCurrentPoint = countDistanceBetween2PointsIn2D(currentPoint, point);
-                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint //&& distanceFromCurrentPoint < distanceLimit
+                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint && distanceFromCurrentPoint < distanceLimit
                                         ) {
                                     minDistanceFromCurrentPoint = distanceFromCurrentPoint;
                                     nearestPointToCurrentPoint = point;

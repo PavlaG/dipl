@@ -25,6 +25,8 @@ public class GUI extends javax.swing.JFrame {
     private Service service;
     private BufferedImage screenshot = null;
     private boolean butPathfindingWasUsed;
+    private boolean butStartWasUsed;
+    private String path=new String("");
 
     /**
      * Creates new form GUI
@@ -32,6 +34,8 @@ public class GUI extends javax.swing.JFrame {
     public GUI(PointCloudVisualiser app) {
         initComponents();
         this.app = app;
+        inputContours.setText("");
+        inputScale.setText("");
 
     }
 
@@ -77,6 +81,11 @@ public class GUI extends javax.swing.JFrame {
         txtPointsNum = new javax.swing.JLabel();
         txtContoursNum = new javax.swing.JLabel();
         txtContoursTime = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        inputScale = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        inputContours = new javax.swing.JTextField();
+        butStart = new javax.swing.JButton();
 
         fileOpener.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -123,7 +132,7 @@ public class GUI extends javax.swing.JFrame {
                 radCubesOctreeActionPerformed(evt);
             }
         });
-        jPanel3.add(radCubesOctree, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 155, -1));
+        jPanel3.add(radCubesOctree, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 380, 155, -1));
 
         butGroupProjection.add(radPoints);
         radPoints.setSelected(true);
@@ -133,7 +142,7 @@ public class GUI extends javax.swing.JFrame {
                 radPointsActionPerformed(evt);
             }
         });
-        jPanel3.add(radPoints, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 105, 155, -1));
+        jPanel3.add(radPoints, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, 155, -1));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 204, 204)));
 
@@ -244,7 +253,7 @@ public class GUI extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 410, -1));
+        jPanel3.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, 410, -1));
 
         butGroupProjection.add(radContours);
         radContours.setText("Kontury");
@@ -253,7 +262,7 @@ public class GUI extends javax.swing.JFrame {
                 radContoursActionPerformed(evt);
             }
         });
-        jPanel3.add(radContours, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 144, 155, -1));
+        jPanel3.add(radContours, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 155, -1));
 
         butGroupProjection.add(radTinyCubes);
         radTinyCubes.setText("Základní krychle");
@@ -262,7 +271,7 @@ public class GUI extends javax.swing.JFrame {
                 radTinyCubesActionPerformed(evt);
             }
         });
-        jPanel3.add(radTinyCubes, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 183, 155, -1));
+        jPanel3.add(radTinyCubes, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 155, -1));
 
         butGroupProjection.add(radCubes);
         radCubes.setText("Krychle");
@@ -271,7 +280,7 @@ public class GUI extends javax.swing.JFrame {
                 radCubesActionPerformed(evt);
             }
         });
-        jPanel3.add(radCubes, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 222, 155, -1));
+        jPanel3.add(radCubes, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 155, -1));
 
         butGroupProjection.add(radCuboids);
         radCuboids.setText("Kvádry");
@@ -280,56 +289,82 @@ public class GUI extends javax.swing.JFrame {
                 radCuboidsActionPerformed(evt);
             }
         });
-        jPanel3.add(radCuboids, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 261, 155, -1));
+        jPanel3.add(radCuboids, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 155, -1));
 
         txtTinyCubesNum.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jPanel3.add(txtTinyCubesNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(165, 183, 70, 21));
+        jPanel3.add(txtTinyCubesNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 70, 21));
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Počet");
-        jPanel3.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(165, 76, 70, -1));
+        jPanel3.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 150, 70, -1));
 
         txtCubesNum.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jPanel3.add(txtCubesNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(165, 222, 70, 21));
+        jPanel3.add(txtCubesNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 300, 70, 21));
 
         txtCuboidsNum.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jPanel3.add(txtCuboidsNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(165, 261, 70, 21));
+        jPanel3.add(txtCuboidsNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 340, 70, 21));
 
         txtOctreeNum.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jPanel3.add(txtOctreeNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(165, 300, 70, 21));
+        jPanel3.add(txtOctreeNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 380, 70, 21));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Čas v ms");
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(271, 76, 97, -1));
+        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 150, 97, -1));
 
         txtTinyCubesTime.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         txtTinyCubesTime.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanel3.add(txtTinyCubesTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(271, 183, 97, 21));
+        jPanel3.add(txtTinyCubesTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 260, 97, 21));
 
         txtCubesTime.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         txtCubesTime.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanel3.add(txtCubesTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(271, 222, 97, 21));
+        jPanel3.add(txtCubesTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 300, 97, 21));
 
         txtCuboidsTime.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         txtCuboidsTime.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanel3.add(txtCuboidsTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(271, 261, 97, 21));
+        jPanel3.add(txtCuboidsTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 340, 97, 21));
 
         txtOctreeTime.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         txtOctreeTime.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanel3.add(txtOctreeTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(271, 300, 97, 21));
+        jPanel3.add(txtOctreeTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 380, 97, 21));
 
         txtPointsNum.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         txtPointsNum.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        jPanel3.add(txtPointsNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(165, 105, 70, 21));
+        jPanel3.add(txtPointsNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 180, 70, 21));
 
         txtContoursNum.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         txtContoursNum.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        jPanel3.add(txtContoursNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(165, 144, 70, 21));
+        jPanel3.add(txtContoursNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 220, 70, 21));
 
         txtContoursTime.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         txtContoursTime.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        jPanel3.add(txtContoursTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(271, 144, 97, 21));
+        jPanel3.add(txtContoursTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 220, 97, 21));
+
+        jLabel3.setText("Scale");
+        jLabel3.setMaximumSize(new java.awt.Dimension(24, 21));
+        jLabel3.setMinimumSize(new java.awt.Dimension(24, 21));
+        jLabel3.setPreferredSize(new java.awt.Dimension(24, 21));
+        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
+
+        inputScale.setMinimumSize(new java.awt.Dimension(40, 21));
+        jPanel3.add(inputScale, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 40, 140, -1));
+
+        jLabel4.setText("Kontury");
+        jLabel4.setMaximumSize(new java.awt.Dimension(35, 21));
+        jLabel4.setMinimumSize(new java.awt.Dimension(35, 21));
+        jLabel4.setPreferredSize(new java.awt.Dimension(35, 21));
+        jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, -1, -1));
+
+        inputContours.setPreferredSize(new java.awt.Dimension(7, 21));
+        jPanel3.add(inputContours, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 70, 140, -1));
+
+        butStart.setText("Start");
+        butStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butStartActionPerformed(evt);
+            }
+        });
+        jPanel3.add(butStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 60, -1, -1));
 
         jScrollPane1.setViewportView(jPanel3);
 
@@ -372,17 +407,19 @@ public class GUI extends javax.swing.JFrame {
 
     private void butImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butImportActionPerformed
         fileOpener.showOpenDialog(this);
+        butPathfindingWasUsed =false;
 
     }//GEN-LAST:event_butImportActionPerformed
 
     private void fileOpenerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileOpenerActionPerformed
         if ("ApproveSelection".equals(evt.getActionCommand())) {
+            butStartWasUsed = false;
             loadObject(fileOpener.getSelectedFile().getAbsolutePath());
         }
     }//GEN-LAST:event_fileOpenerActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (service != null) {
+        if (service != null && butStartWasUsed) {
             app.setDoScreenshot(true);
 
             try {
@@ -398,7 +435,7 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void radContoursActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radContoursActionPerformed
-        if (service != null) {
+        if (service != null && butStartWasUsed) {
             if (radContours.isSelected()) {
 
                 service.setVisibility(service.getContoursModel());
@@ -407,7 +444,7 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_radContoursActionPerformed
 
     private void radTinyCubesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radTinyCubesActionPerformed
-        if (service != null) {
+        if (service != null && butStartWasUsed) {
             if (radTinyCubes.isSelected()) {
                 service.setVisibility(service.getCubesCloudModel());
             }
@@ -415,7 +452,7 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_radTinyCubesActionPerformed
 
     private void radCubesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radCubesActionPerformed
-        if (service != null) {
+        if (service != null && butStartWasUsed) {
             if (radCubes.isSelected()) {
                 service.setVisibility(service.getCubeBlockCloudModel());
             }
@@ -423,7 +460,7 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_radCubesActionPerformed
 
     private void radCuboidsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radCuboidsActionPerformed
-        if (service != null) {
+        if (service != null && butStartWasUsed) {
             if (radCuboids.isSelected()) {
                 service.setVisibility(service.getCuboidBlockCloudModel());
             }
@@ -431,7 +468,7 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_radCuboidsActionPerformed
 
     private void radCubesOctreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radCubesOctreeActionPerformed
-        if (service != null) {
+        if (service != null && butStartWasUsed) {
             if (radCubesOctree.isSelected()) {
                 service.setVisibility(service.getCubeOctreeBlockCloudModel());
             }
@@ -439,7 +476,7 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_radCubesOctreeActionPerformed
 
     private void radPointsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radPointsActionPerformed
-        if (service != null) {
+        if (service != null && butStartWasUsed) {
             if (radPoints.isSelected()) {
                 service.setVisibility(service.getModelPointCloud());
             }
@@ -456,62 +493,65 @@ public class GUI extends javax.swing.JFrame {
 
     private void butPathfindingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butPathfindingActionPerformed
         butPathfindingWasUsed = true;
-        if (service != null) {
+        warningLabel.setText("");
+        if (service != null && butStartWasUsed) {
             if (radCubesOctree.isSelected() || radCuboids.isSelected() || radCubes.isSelected() || radTinyCubes.isSelected()) {
                 radPoints.setSelected(true);
                 service.setVisibility(service.getModelPointCloud());
             }
-
-            if (service.graphAndSoOn2()) {
+            int value = service.graphAndSoOn2();
+            if (value == 1) {
                 warningLabel.setText("");
-                if (!service.isSameBlock()) {
+                //   if (!service.isSameBlock()) {
 
-                    if (radPathfinCubes.isSelected()) {
-                        // service.graphAndSoOn(service.getCubeBlocks(), radPathLine.isSelected());
-                        if (radPathBlocks.isSelected()) {
-                            service.getBlockModelForPathCubes().setVisible(true);
-                            service.getStartCubes().setVisible(false);
-                            service.getFinishCubes().setVisible(false);
-                        } else {
-                            service.getGraphModelForPathCubes().setVisible(true);
-                            service.getStartCubes().setVisible(true);
-                            service.getFinishCubes().setVisible(true);
-                        }
-                    } else if (radPathfinCuboids.isSelected()) {
-                        //service.graphAndSoOn(service.getCuboidBlocks(), radPathLine.isSelected());
-                        if (radPathBlocks.isSelected()) {
-                            service.getBlockModelForPathCuboids().setVisible(true);
-                            service.getStartCuboids().setVisible(false);
-                            service.getFinishCuboids().setVisible(false);
-                        } else {
-                            service.getGraphModelForPathCuboids().setVisible(true);
-                            service.getStartCuboids().setVisible(true);
-                            service.getFinishCuboids().setVisible(true);
-                        }
-                    } else if (radPathfinCubesOctree.isSelected()) {
-
-                        if (radPathBlocks.isSelected()) {
-                            service.getBlockModelForPathCubesOctree().setVisible(true);
-                            service.getStartCubesOctree().setVisible(false);
-                            service.getFinishCubesOctree().setVisible(false);
-                        } else {
-                            service.getGraphModelForPathCubesOctree().setVisible(true);
-                            service.getStartCubesOctree().setVisible(true);
-                            service.getFinishCubesOctree().setVisible(true);
-                        }
-                        //service.graphAndSoOn(service.getCubesOctreeBlocks(), radPathLine.isSelected());
+                if (radPathfinCubes.isSelected()) {
+                    if (radPathBlocks.isSelected()) {
+                        service.getBlockModelForPathCubes().setVisible(true);
+                        service.getStartCubes().setVisible(false);
+                        service.getFinishCubes().setVisible(false);
+                    } else {
+                        service.getGraphModelForPathCubes().setVisible(true);
+                        service.getStartCubes().setVisible(true);
+                        service.getFinishCubes().setVisible(true);
                     }
-                } else {
-                    warningLabel.setText("Start a cíl se nacházají ve stejném bloku, opakujte pokus.");
+                } else if (radPathfinCuboids.isSelected()) {
+                    if (radPathBlocks.isSelected()) {
+                        service.getBlockModelForPathCuboids().setVisible(true);
+                        service.getStartCuboids().setVisible(false);
+                        service.getFinishCuboids().setVisible(false);
+                    } else {
+                        service.getGraphModelForPathCuboids().setVisible(true);
+                        service.getStartCuboids().setVisible(true);
+                        service.getFinishCuboids().setVisible(true);
+                    }
+                } else if (radPathfinCubesOctree.isSelected()) {
+
+                    if (radPathBlocks.isSelected()) {
+                        service.getBlockModelForPathCubesOctree().setVisible(true);
+                        service.getStartCubesOctree().setVisible(false);
+                        service.getFinishCubesOctree().setVisible(false);
+                    } else {
+                        service.getGraphModelForPathCubesOctree().setVisible(true);
+                        service.getStartCubesOctree().setVisible(true);
+                        service.getFinishCubesOctree().setVisible(true);
+                    }
+
                 }
-            } else {
+//                } else {
+//                    warningLabel.setText("Start a cíl se nacházají ve stejném bloku, opakujte pokus.");
+//                }
+            } else if (value == 2) {
+                warningLabel.setText("Start a cíl se nacházají ve stejném bloku, opakujte pokus.");
+            } else if (value == 0) {
                 warningLabel.setText("Cesta mezi těmito bloky neexistuje.");
             }
         }
     }//GEN-LAST:event_butPathfindingActionPerformed
 
     private void radPathfinCubesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radPathfinCubesActionPerformed
+        // if (service != null && !butStartWasUsed) {
         buttonsIfElse();
+        //   }
     }//GEN-LAST:event_radPathfinCubesActionPerformed
 
     private void fileSaverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaverActionPerformed
@@ -541,12 +581,13 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_radPathBlocksActionPerformed
 
     private void buttonsIfElse() {
-        service.setAllPathfindingModelsToUnvisible();
-        if (butPathfindingWasUsed) {
+        if (service != null && butStartWasUsed) {
+            service.setAllPathfindingModelsToUnvisible();
             warningLabel.setText("");
-            if (!service.isSameBlock()) {
-
-                if (service.isPathFound()) {
+            if (butPathfindingWasUsed) {
+                warningLabel.setText("");
+                int value = service.getPathFound();
+                if (value == 1) {
 
                     if (radPathfinCubes.isSelected()) {
                         // service.graphAndSoOn(service.getCubeBlocks(), radPathLine.isSelected());
@@ -583,11 +624,12 @@ public class GUI extends javax.swing.JFrame {
                         }
                         //service.graphAndSoOn(service.getCubesOctreeBlocks(), radPathLine.isSelected());
                     }
-                } else {
+                } else if (value == 2) {
+                    warningLabel.setText("Start a cíl se nacházají ve stejném bloku, opakujte pokus.");
+                } else if (value == 0) {
                     warningLabel.setText("Cesta mezi těmito bloky neexistuje.");
                 }
-            } else {
-                warningLabel.setText("Start a cíl se nacházají ve stejném bloku, opakujte pokus.");
+
             }
         }
     }
@@ -600,12 +642,14 @@ public class GUI extends javax.swing.JFrame {
         buttonsIfElse();
     }//GEN-LAST:event_radPathfinCubesOctreeActionPerformed
 
-    private void loadObject(String path) {
-        app.deleteAllModelsFromModelsToDraw();
-
-        service = new Service(path, app);
-
-        service.inicialisation();
+    private void butStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butStartActionPerformed
+        if(!path.isEmpty()){
+            butPathfindingWasUsed = false;
+            app.deleteAllModelsFromModelsToDraw();
+        service = new Service(path, app,inputScale.getText());
+        if (service != null ) {
+        butStartWasUsed = true;
+        service.inicialisation( inputContours.getText());
 
         txtTinyCubesNum.setText(Integer.toString(service.getCubes().size()));
         txtCubesNum.setText(Integer.toString(service.getCubeBlocks().size()));
@@ -622,8 +666,34 @@ public class GUI extends javax.swing.JFrame {
         radPoints.setSelected(true);
         radPathBlocks.setSelected(true);
         radPathfinCubes.setSelected(true);
+         }}
+    }//GEN-LAST:event_butStartActionPerformed
 
+    private void loadObject(String path) {
+        app.deleteAllModelsFromModelsToDraw();
+this.path=path;
+       // service = new Service(path, app);
+
+//        service.inicialisation();
+//
+//        txtTinyCubesNum.setText(Integer.toString(service.getCubes().size()));
+//        txtCubesNum.setText(Integer.toString(service.getCubeBlocks().size()));
+//        txtCuboidsNum.setText(Integer.toString(service.getCuboidBlocks().size()));
+//        txtOctreeNum.setText(Integer.toString(service.getCubesOctreeBlocks().size()));
+//
+//        txtTinyCubesTime.setText(Long.toString(service.getCubesMaker().getTime()));
+//        txtCubesTime.setText(Long.toString(service.getCubeBlockMaker().getTime() + service.getCubesMaker().getTime()));
+//        txtCuboidsTime.setText(Long.toString(service.getCuboidBlockMaker().getTime() + service.getCubesMaker().getTime()));
+//        txtOctreeTime.setText(Long.toString(service.getCubesOctreeBlockMaker().getTime() + service.getCubesMaker().getTime()));
+//        txtPointsNum.setText(Integer.toString(service.getModelPointCloud().getPointsList().size()));
+//        txtContoursNum.setText(Integer.toString(service.getContourMaker().getAmountOfContours()));
+//        txtContoursTime.setText(Long.toString(service.getContourMaker().getTime()));
+//        radPoints.setSelected(true);
+//        radPathBlocks.setSelected(true);
+//        radPathfinCubes.setSelected(true);
     }
+
+   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup butGroupPathfinding;
@@ -631,12 +701,17 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.ButtonGroup butGroupProjection;
     private javax.swing.JButton butImport;
     private javax.swing.JButton butPathfinding;
+    private javax.swing.JButton butStart;
     private javax.swing.JFileChooser fileOpener;
     private javax.swing.JFileChooser fileSaver;
     private java.awt.Canvas graphicsCanvas;
+    private javax.swing.JTextField inputContours;
+    private javax.swing.JTextField inputScale;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

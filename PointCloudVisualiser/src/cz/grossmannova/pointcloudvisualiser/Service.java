@@ -81,27 +81,47 @@ public class Service {
     SphereModel startCubesOctree;
     SphereModel finishCubesOctree;
     boolean sameBlock = false;
-    boolean pathFound = false;
+    int pathFound = 0;
 
-    public Service(String path, PointCloudVisualiser app) {
-//
+    public Service(String path, PointCloudVisualiser app, String scaleInput) {
+
+int scale;
+   if (!scaleInput.isEmpty()) {
+            try {
+                scale = Integer.parseInt(scaleInput);
+            } catch (NumberFormatException e) {
+                scale = 30;
+            }
+        } else {
+            scale = 30;
+        }
+   
+   
         this.app = app;
         PointCloudFile file = new PointCloudFileCSV(path);
-        modelPointCloud = new ModelPointCloud(file.readPoints());
+        modelPointCloud = new ModelPointCloud(file.readPoints(), scale);
         spaceModels = new ArrayList<>();
         pathfindingModels = new ArrayList<>();
     }
 
-    public void inicialisation() {//kontury
-//        this.app = app;
-//        PointCloudFile file = new PointCloudFileCSV(path);
-//        modelPointCloud = new ModelPointCloud(file.readPoints());
-//        spaceModels = new ArrayList<>();
-//        pathfindingModels = new ArrayList<>();
-//        
+    public void inicialisation(String contoursInput) {//kontury
 
-        // app.deleteAllModelsFromModelsToDraw();
-        contourMaker = new ContourMaker(modelPointCloud.pointsList, modelPointCloud.getMaxY());
+        int  contoursDistanceLimit;
+     
+        
+        if (!contoursInput.isEmpty()) {
+            try {
+                contoursDistanceLimit = Integer.parseInt(contoursInput);
+            } catch (NumberFormatException e) {
+                System.out.println("catch");
+                contoursDistanceLimit = 10;
+            }
+        } else {
+            System.out.println("else");
+            contoursDistanceLimit = 10;
+        }
+
+        contourMaker = new ContourMaker(modelPointCloud.pointsList, modelPointCloud.getMaxY(), contoursDistanceLimit);
         ArrayList<ArrayList<ArrayList<Point>>> contours = contourMaker.generate();
         contoursModel = new ContoursModel(contours);
         //vnitřní prvotní krychličky
@@ -191,8 +211,8 @@ public class Service {
         sendModelsFromGraph();
     }
 
-    public boolean graphAndSoOn2() {
-        pathFound = false;
+    public int graphAndSoOn2() {
+        pathFound = 0;
         sameBlock = false;
         app.deleteAllPathfindingModelsToDraw(pathfindingModels);
         pathfindingModels.clear();
@@ -206,6 +226,7 @@ public class Service {
         pathfinderCubes.resetStartAndFinish2(seed);
         if (pathfinderCubes.getStart().equals(pathfinderCubes.getFinish())) {
             sameBlock = true;
+            pathFound = 2;
         }
         startCubes = new SphereModel(pathfinderCubes.getStart().getCenter());
         finishCubes = new SphereModel(pathfinderCubes.getFinish().getCenter());
@@ -219,6 +240,7 @@ public class Service {
         finishCuboids = new SphereModel(pathfinderCuboids.getFinish().getCenter());
         if (pathfinderCuboids.getStart().equals(pathfinderCuboids.getFinish())) {
             sameBlock = true;
+            pathFound = 2;
         }
 //
         Graph graphCubesOctree = new Graph(cubesOctreeBlocks, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ());
@@ -231,10 +253,12 @@ public class Service {
 
         if (pathfinderCubesOctree.getStart().equals(pathfinderCubesOctree.getFinish())) {
             sameBlock = true;
+            pathFound = 2;
         }
         if (sameBlock == false) {
-              if (pathFound=pathfinderCubes.findPath()) {
-           // if (true == false) {
+            if (pathfinderCubes.findPath() == true) {
+                pathFound = 1; //nalezená cesta
+                // if (true == false) {
                 System.out.println("nalezeno");
                 graphModelForPathCubes = new GraphModel(pathfinderCubes.getLineGraph());
                 blockModelForPathCubes = new BlockCloudModel(pathfinderCubes.getBlockGraph());
@@ -490,7 +514,7 @@ public class Service {
         return sameBlock;
     }
 
-    public boolean isPathFound() {
+    public int getPathFound() {
         return pathFound;
     }
 

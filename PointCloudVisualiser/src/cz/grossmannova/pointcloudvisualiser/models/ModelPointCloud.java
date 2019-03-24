@@ -22,10 +22,10 @@ public class ModelPointCloud extends Model {
 
     private int listId = -1;
 
-    public ModelPointCloud(List<Point> pointsList) {
+    public ModelPointCloud(List<Point> pointsList, int scale) {
         super(pointsList);
         normalise();
-        scale();
+        scale(scale);
         //round(); //tahle metoda zaokrouhlí souřadnice a posune body do mřížky, prozatím ji nahradím následujícím řádkem
         pointsListRounded = pointsListScaled;
         moveCornerOfObjectToCoords000(); //posune roh obalu objektu do 000
@@ -121,9 +121,9 @@ public class ModelPointCloud extends Model {
         System.out.println("minX=" + minX + " maxX=" + maxX + " minY=" + minY + " maxY=" + maxY + " minZ=" + minZ + " maxZ=" + maxZ);
     }
 
-    private void scale() {
+    private void scale(int scale) {
         //pak se bude zadávat uživatelem, teď natvrdo:
-        int scale = 30;
+        //int scale = 30;
         for (Point point : pointsListNormalised) {
             pointsListScaled.add(new Point(
                     point.getCoords().getX() * scale,

@@ -172,14 +172,15 @@ public abstract class Pathfinder {
             y = r.nextInt(cubesArray[1].length - 1);
             x = r.nextInt(cubesArray.length - 1);
             z = r.nextInt(cubesArray[1][1].length - 1);
-            if (cubesExistance[x][y][z] == true && !cubesArray[x][y][z].getCorrespondingBlock().equals(start)) {
+            if (cubesExistance[x][y][z] == true //&& !cubesArray[x][y][z].getCorrespondingBlock().equals(start)
+                    ) {
                 finish = cubesArray[x][y][z].getCorrespondingBlock();
                 stop = true;
 
             }
         }
         //start=finish;
-        Random rand= new Random();
+    //    Random rand= new Random();
 //        if(rand.nextInt(2)==1){
 //            System.out.println("vadne");
 //        start=cubesArray[7][0][8].getCorrespondingBlock();
