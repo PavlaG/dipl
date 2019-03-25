@@ -83,18 +83,9 @@ public class Service {
     boolean sameBlock = false;
     int pathFound = 0;
 
-    public Service(String path, PointCloudVisualiser app, String scaleInput) {
+    public Service(String path, PointCloudVisualiser app, int scale) {
 
-int scale;
-   if (!scaleInput.isEmpty()) {
-            try {
-                scale = Integer.parseInt(scaleInput);
-            } catch (NumberFormatException e) {
-                scale = 30;
-            }
-        } else {
-            scale = 30;
-        }
+
    
    
         this.app = app;
@@ -104,22 +95,9 @@ int scale;
         pathfindingModels = new ArrayList<>();
     }
 
-    public void inicialisation(String contoursInput) {//kontury
+    public void inicialisation(int contoursDistanceLimit) {//kontury
 
-        int  contoursDistanceLimit;
-     
-        
-        if (!contoursInput.isEmpty()) {
-            try {
-                contoursDistanceLimit = Integer.parseInt(contoursInput);
-            } catch (NumberFormatException e) {
-                System.out.println("catch");
-                contoursDistanceLimit = 10;
-            }
-        } else {
-            System.out.println("else");
-            contoursDistanceLimit = 10;
-        }
+       
 
         contourMaker = new ContourMaker(modelPointCloud.pointsList, modelPointCloud.getMaxY(), contoursDistanceLimit);
         ArrayList<ArrayList<ArrayList<Point>>> contours = contourMaker.generate();

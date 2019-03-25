@@ -26,7 +26,7 @@ public class GUI extends javax.swing.JFrame {
     private BufferedImage screenshot = null;
     private boolean butPathfindingWasUsed;
     private boolean butStartWasUsed;
-    private String path=new String("");
+    private String path = new String("");
 
     /**
      * Creates new form GUI
@@ -213,8 +213,10 @@ public class GUI extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(radPathfinCubesOctree, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(radPathfinCuboids, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(butPathfinding, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(warningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(warningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addComponent(butPathfinding, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 21, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -340,31 +342,32 @@ public class GUI extends javax.swing.JFrame {
         txtContoursTime.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         jPanel3.add(txtContoursTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 220, 97, 21));
 
-        jLabel3.setText("Scale");
+        jLabel3.setText("Velikost");
         jLabel3.setMaximumSize(new java.awt.Dimension(24, 21));
         jLabel3.setMinimumSize(new java.awt.Dimension(24, 21));
         jLabel3.setPreferredSize(new java.awt.Dimension(24, 21));
-        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
+        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 40, -1));
 
         inputScale.setMinimumSize(new java.awt.Dimension(40, 21));
         jPanel3.add(inputScale, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 40, 140, -1));
 
-        jLabel4.setText("Kontury");
+        jLabel4.setText("Kontury (pomocná vzdálenost)");
         jLabel4.setMaximumSize(new java.awt.Dimension(35, 21));
         jLabel4.setMinimumSize(new java.awt.Dimension(35, 21));
         jLabel4.setPreferredSize(new java.awt.Dimension(35, 21));
-        jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, -1, -1));
+        jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 160, -1));
 
         inputContours.setPreferredSize(new java.awt.Dimension(7, 21));
-        jPanel3.add(inputContours, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 70, 140, -1));
+        jPanel3.add(inputContours, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 70, 140, -1));
 
+        butStart.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         butStart.setText("Start");
         butStart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 butStartActionPerformed(evt);
             }
         });
-        jPanel3.add(butStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 60, -1, -1));
+        jPanel3.add(butStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 70, -1, -1));
 
         jScrollPane1.setViewportView(jPanel3);
 
@@ -407,7 +410,7 @@ public class GUI extends javax.swing.JFrame {
 
     private void butImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butImportActionPerformed
         fileOpener.showOpenDialog(this);
-        butPathfindingWasUsed =false;
+        butPathfindingWasUsed = false;
 
     }//GEN-LAST:event_butImportActionPerformed
 
@@ -643,36 +646,76 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_radPathfinCubesOctreeActionPerformed
 
     private void butStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butStartActionPerformed
-        if(!path.isEmpty()){
+        if (!path.isEmpty()) {
             butPathfindingWasUsed = false;
             app.deleteAllModelsFromModelsToDraw();
-        service = new Service(path, app,inputScale.getText());
-        if (service != null ) {
-        butStartWasUsed = true;
-        service.inicialisation( inputContours.getText());
 
-        txtTinyCubesNum.setText(Integer.toString(service.getCubes().size()));
-        txtCubesNum.setText(Integer.toString(service.getCubeBlocks().size()));
-        txtCuboidsNum.setText(Integer.toString(service.getCuboidBlocks().size()));
-        txtOctreeNum.setText(Integer.toString(service.getCubesOctreeBlocks().size()));
+            int scale;
+            if (!inputScale.getText().isEmpty()) {
+                try {
+                    scale = Integer.parseInt(inputScale.getText());
+                    if (scale < 10) {
+                        scale = 10;
+                        inputScale.setText("10");
+                    }
 
-        txtTinyCubesTime.setText(Long.toString(service.getCubesMaker().getTime()));
-        txtCubesTime.setText(Long.toString(service.getCubeBlockMaker().getTime() + service.getCubesMaker().getTime()));
-        txtCuboidsTime.setText(Long.toString(service.getCuboidBlockMaker().getTime() + service.getCubesMaker().getTime()));
-        txtOctreeTime.setText(Long.toString(service.getCubesOctreeBlockMaker().getTime() + service.getCubesMaker().getTime()));
-        txtPointsNum.setText(Integer.toString(service.getModelPointCloud().getPointsList().size()));
-        txtContoursNum.setText(Integer.toString(service.getContourMaker().getAmountOfContours()));
-        txtContoursTime.setText(Long.toString(service.getContourMaker().getTime()));
-        radPoints.setSelected(true);
-        radPathBlocks.setSelected(true);
-        radPathfinCubes.setSelected(true);
-         }}
+                } catch (NumberFormatException e) {
+                    scale = 30;
+                    inputScale.setText("30");
+                }
+            } else {
+                scale = 30;
+                inputScale.setText("30");
+            }
+
+            service = new Service(path, app, scale);
+            if (service != null) {
+                butStartWasUsed = true;
+                int contoursDistanceLimit = 0;
+                if (!inputContours.getText().isEmpty()) {
+                    try {
+                        contoursDistanceLimit = Integer.parseInt(inputContours.getText());
+                        if (contoursDistanceLimit < 1) {
+                            contoursDistanceLimit = 1;
+                            inputContours.setText("1");
+                        }
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("catch");
+                         inputContours.setText("10");
+                        contoursDistanceLimit = 10;
+                    }
+                } else {
+                    System.out.println("else");
+                     inputContours.setText("10");
+                    contoursDistanceLimit = 10;
+                }
+
+                service.inicialisation(contoursDistanceLimit);
+
+                txtTinyCubesNum.setText(Integer.toString(service.getCubes().size()));
+                txtCubesNum.setText(Integer.toString(service.getCubeBlocks().size()));
+                txtCuboidsNum.setText(Integer.toString(service.getCuboidBlocks().size()));
+                txtOctreeNum.setText(Integer.toString(service.getCubesOctreeBlocks().size()));
+
+                txtTinyCubesTime.setText(Long.toString(service.getCubesMaker().getTime()));
+                txtCubesTime.setText(Long.toString(service.getCubeBlockMaker().getTime() + service.getCubesMaker().getTime()));
+                txtCuboidsTime.setText(Long.toString(service.getCuboidBlockMaker().getTime() + service.getCubesMaker().getTime()));
+                txtOctreeTime.setText(Long.toString(service.getCubesOctreeBlockMaker().getTime() + service.getCubesMaker().getTime()));
+                txtPointsNum.setText(Integer.toString(service.getModelPointCloud().getPointsList().size()));
+                txtContoursNum.setText(Integer.toString(service.getContourMaker().getAmountOfContours()));
+                txtContoursTime.setText(Long.toString(service.getContourMaker().getTime()));
+                radPoints.setSelected(true);
+                radPathBlocks.setSelected(true);
+                radPathfinCubes.setSelected(true);
+            }
+        }
     }//GEN-LAST:event_butStartActionPerformed
 
     private void loadObject(String path) {
         app.deleteAllModelsFromModelsToDraw();
-this.path=path;
-       // service = new Service(path, app);
+        this.path = path;
+        // service = new Service(path, app);
 
 //        service.inicialisation();
 //
@@ -693,7 +736,6 @@ this.path=path;
 //        radPathfinCubes.setSelected(true);
     }
 
-   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup butGroupPathfinding;
