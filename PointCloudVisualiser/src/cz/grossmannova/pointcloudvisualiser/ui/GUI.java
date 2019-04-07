@@ -1,12 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.grossmannova.pointcloudvisualiser.ui;
 
 import cz.grossmannova.pointcloudvisualiser.PointCloudVisualiser;
 import cz.grossmannova.pointcloudvisualiser.Service;
+import cz.grossmannova.pointcloudvisualiser.models.Model;
+import cz.grossmannova.pointcloudvisualiser.pointcloud.BlockType;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +33,8 @@ public class GUI extends javax.swing.JFrame {
         this.app = app;
         inputContours.setText("");
         inputScale.setText("");
+        sliderY.setMinimum(0);
+        sliderY.setMaximum(100);
 
     }
 
@@ -86,6 +85,10 @@ public class GUI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         inputContours = new javax.swing.JTextField();
         butStart = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        radCuttings = new javax.swing.JRadioButton();
+        sliderY = new javax.swing.JSlider();
+        jLabel5 = new javax.swing.JLabel();
 
         fileOpener.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -114,7 +117,8 @@ public class GUI extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1500, 880));
+        setMinimumSize(new java.awt.Dimension(1600, 880));
+        setPreferredSize(new java.awt.Dimension(1600, 880));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -346,19 +350,19 @@ public class GUI extends javax.swing.JFrame {
         jLabel3.setMaximumSize(new java.awt.Dimension(24, 21));
         jLabel3.setMinimumSize(new java.awt.Dimension(24, 21));
         jLabel3.setPreferredSize(new java.awt.Dimension(24, 21));
-        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 40, -1));
+        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 90, -1));
 
         inputScale.setMinimumSize(new java.awt.Dimension(40, 21));
-        jPanel3.add(inputScale, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 40, 140, -1));
+        jPanel3.add(inputScale, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 40, 140, -1));
 
         jLabel4.setText("Kontury (pomocná vzdálenost)");
         jLabel4.setMaximumSize(new java.awt.Dimension(35, 21));
         jLabel4.setMinimumSize(new java.awt.Dimension(35, 21));
         jLabel4.setPreferredSize(new java.awt.Dimension(35, 21));
-        jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 160, -1));
+        jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 210, -1));
 
         inputContours.setPreferredSize(new java.awt.Dimension(7, 21));
-        jPanel3.add(inputContours, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 70, 140, -1));
+        jPanel3.add(inputContours, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 70, 90, -1));
 
         butStart.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         butStart.setText("Start");
@@ -367,7 +371,63 @@ public class GUI extends javax.swing.JFrame {
                 butStartActionPerformed(evt);
             }
         });
-        jPanel3.add(butStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 70, -1, -1));
+        jPanel3.add(butStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 70, -1, -1));
+
+        radCuttings.setText("Řez");
+        radCuttings.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radCuttingsActionPerformed(evt);
+            }
+        });
+
+        sliderY.setMajorTickSpacing(10);
+        sliderY.setMinorTickSpacing(1);
+        sliderY.setPaintLabels(true);
+        sliderY.setPaintTicks(true);
+        sliderY.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                sliderYMouseDragged(evt);
+            }
+        });
+        sliderY.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                sliderYMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                sliderYMouseReleased(evt);
+            }
+        });
+
+        jLabel5.setText("Y");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(radCuttings, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(12, Short.MAX_VALUE)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sliderY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(43, 43, 43))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(radCuttings)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(sliderY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addContainerGap(61, Short.MAX_VALUE))
+        );
+
+        jPanel3.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 650, 290, 150));
 
         jScrollPane1.setViewportView(jPanel3);
 
@@ -377,7 +437,7 @@ public class GUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(graphicsCanvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(graphicsCanvas, javax.swing.GroupLayout.PREFERRED_SIZE, 1040, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(6, 6, 6)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -387,7 +447,7 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(graphicsCanvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(graphicsCanvas, javax.swing.GroupLayout.PREFERRED_SIZE, 800, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 811, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -398,20 +458,16 @@ public class GUI extends javax.swing.JFrame {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         if (thread == null || !thread.isAlive()) {
             thread = new Thread(() -> {
-
                 app.inicialization(graphicsCanvas);
-
             }, "OGL");
             thread.start();
-
-            // loadObject("C:\\Users\\Pavla\\Documents\\bunny.txt");
         }
     }//GEN-LAST:event_formWindowOpened
 
     private void butImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butImportActionPerformed
         fileOpener.showOpenDialog(this);
         butPathfindingWasUsed = false;
-
+        radCuttings.setSelected(false);
     }//GEN-LAST:event_butImportActionPerformed
 
     private void fileOpenerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileOpenerActionPerformed
@@ -424,7 +480,6 @@ public class GUI extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (service != null && butStartWasUsed) {
             app.setDoScreenshot(true);
-
             try {
                 while ((screenshot = app.getScreenshot()) == null) {
                     Thread.sleep(100);
@@ -440,7 +495,7 @@ public class GUI extends javax.swing.JFrame {
     private void radContoursActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radContoursActionPerformed
         if (service != null && butStartWasUsed) {
             if (radContours.isSelected()) {
-
+                updateCutting();
                 service.setVisibility(service.getContoursModel());
             }
         }
@@ -449,6 +504,7 @@ public class GUI extends javax.swing.JFrame {
     private void radTinyCubesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radTinyCubesActionPerformed
         if (service != null && butStartWasUsed) {
             if (radTinyCubes.isSelected()) {
+                updateCutting();
                 service.setVisibility(service.getCubesCloudModel());
             }
         }
@@ -457,6 +513,7 @@ public class GUI extends javax.swing.JFrame {
     private void radCubesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radCubesActionPerformed
         if (service != null && butStartWasUsed) {
             if (radCubes.isSelected()) {
+                updateCutting();
                 service.setVisibility(service.getCubeBlockCloudModel());
             }
         }
@@ -465,6 +522,7 @@ public class GUI extends javax.swing.JFrame {
     private void radCuboidsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radCuboidsActionPerformed
         if (service != null && butStartWasUsed) {
             if (radCuboids.isSelected()) {
+                updateCutting();
                 service.setVisibility(service.getCuboidBlockCloudModel());
             }
         }
@@ -473,6 +531,7 @@ public class GUI extends javax.swing.JFrame {
     private void radCubesOctreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radCubesOctreeActionPerformed
         if (service != null && butStartWasUsed) {
             if (radCubesOctree.isSelected()) {
+                updateCutting();
                 service.setVisibility(service.getCubeOctreeBlockCloudModel());
             }
         }
@@ -481,34 +540,34 @@ public class GUI extends javax.swing.JFrame {
     private void radPointsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radPointsActionPerformed
         if (service != null && butStartWasUsed) {
             if (radPoints.isSelected()) {
+                updateCutting();
                 service.setVisibility(service.getModelPointCloud());
             }
         }
     }//GEN-LAST:event_radPointsActionPerformed
 
     private void radPathLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radPathLineActionPerformed
-//        service.getBlockModelForPathCubes().setVisible(false);
-//        service.getGraphModelForPathCubes().setVisible(true);
-//        service.getStart().setVisible(true);
-//        service.getFinish().setVisible(true);
         buttonsIfElse();
     }//GEN-LAST:event_radPathLineActionPerformed
 
     private void butPathfindingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butPathfindingActionPerformed
         butPathfindingWasUsed = true;
+        radCuttings.setSelected(false);
+
         warningLabel.setText("");
         if (service != null && butStartWasUsed) {
             if (radCubesOctree.isSelected() || radCuboids.isSelected() || radCubes.isSelected() || radTinyCubes.isSelected()) {
                 radPoints.setSelected(true);
                 service.setVisibility(service.getModelPointCloud());
             }
-            int value = service.graphAndSoOn2();
+            int value = service.pathfindingInicialisation();
             if (value == 1) {
                 warningLabel.setText("");
-                //   if (!service.isSameBlock()) {
 
                 if (radPathfinCubes.isSelected()) {
+                    updateCutting();
                     if (radPathBlocks.isSelected()) {
+
                         service.getBlockModelForPathCubes().setVisible(true);
                         service.getStartCubes().setVisible(false);
                         service.getFinishCubes().setVisible(false);
@@ -518,6 +577,7 @@ public class GUI extends javax.swing.JFrame {
                         service.getFinishCubes().setVisible(true);
                     }
                 } else if (radPathfinCuboids.isSelected()) {
+                    updateCutting();
                     if (radPathBlocks.isSelected()) {
                         service.getBlockModelForPathCuboids().setVisible(true);
                         service.getStartCuboids().setVisible(false);
@@ -528,7 +588,7 @@ public class GUI extends javax.swing.JFrame {
                         service.getFinishCuboids().setVisible(true);
                     }
                 } else if (radPathfinCubesOctree.isSelected()) {
-
+                    updateCutting();
                     if (radPathBlocks.isSelected()) {
                         service.getBlockModelForPathCubesOctree().setVisible(true);
                         service.getStartCubesOctree().setVisible(false);
@@ -540,9 +600,6 @@ public class GUI extends javax.swing.JFrame {
                     }
 
                 }
-//                } else {
-//                    warningLabel.setText("Start a cíl se nacházají ve stejném bloku, opakujte pokus.");
-//                }
             } else if (value == 2) {
                 warningLabel.setText("Start a cíl se nacházají ve stejném bloku, opakujte pokus.");
             } else if (value == 0) {
@@ -552,9 +609,7 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_butPathfindingActionPerformed
 
     private void radPathfinCubesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radPathfinCubesActionPerformed
-        // if (service != null && !butStartWasUsed) {
         buttonsIfElse();
-        //   }
     }//GEN-LAST:event_radPathfinCubesActionPerformed
 
     private void fileSaverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaverActionPerformed
@@ -565,7 +620,6 @@ public class GUI extends javax.swing.JFrame {
                     s = s.concat(".png");
                 }
                 ImageIO.write(screenshot, "PNG", new File(s));
-
             } catch (IOException ex) {
                 Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -574,12 +628,6 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_fileSaverActionPerformed
 
     private void radPathBlocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radPathBlocksActionPerformed
-//        //if(radPathBlocks.isSelected()){
-//        service.getGraphModelForPathCubes().setVisible(false);
-//        service.getBlockModelForPathCubes().setVisible(true);
-//        service.getStart().setVisible(false);
-//        service.getFinish().setVisible(false);
-//        // }
         buttonsIfElse();
     }//GEN-LAST:event_radPathBlocksActionPerformed
 
@@ -591,9 +639,7 @@ public class GUI extends javax.swing.JFrame {
                 warningLabel.setText("");
                 int value = service.getPathFound();
                 if (value == 1) {
-
                     if (radPathfinCubes.isSelected()) {
-                        // service.graphAndSoOn(service.getCubeBlocks(), radPathLine.isSelected());
                         if (radPathBlocks.isSelected()) {
                             service.getBlockModelForPathCubes().setVisible(true);
                             service.getStartCubes().setVisible(false);
@@ -604,7 +650,6 @@ public class GUI extends javax.swing.JFrame {
                             service.getFinishCubes().setVisible(true);
                         }
                     } else if (radPathfinCuboids.isSelected()) {
-                        //service.graphAndSoOn(service.getCuboidBlocks(), radPathLine.isSelected());
                         if (radPathBlocks.isSelected()) {
                             service.getBlockModelForPathCuboids().setVisible(true);
                             service.getStartCuboids().setVisible(false);
@@ -615,7 +660,6 @@ public class GUI extends javax.swing.JFrame {
                             service.getFinishCuboids().setVisible(true);
                         }
                     } else if (radPathfinCubesOctree.isSelected()) {
-
                         if (radPathBlocks.isSelected()) {
                             service.getBlockModelForPathCubesOctree().setVisible(true);
                             service.getStartCubesOctree().setVisible(false);
@@ -625,14 +669,12 @@ public class GUI extends javax.swing.JFrame {
                             service.getStartCubesOctree().setVisible(true);
                             service.getFinishCubesOctree().setVisible(true);
                         }
-                        //service.graphAndSoOn(service.getCubesOctreeBlocks(), radPathLine.isSelected());
                     }
                 } else if (value == 2) {
                     warningLabel.setText("Start a cíl se nacházají ve stejném bloku, opakujte pokus.");
                 } else if (value == 0) {
                     warningLabel.setText("Cesta mezi těmito bloky neexistuje.");
                 }
-
             }
         }
     }
@@ -646,10 +688,10 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_radPathfinCubesOctreeActionPerformed
 
     private void butStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butStartActionPerformed
+        radCuttings.setSelected(false);
         if (!path.isEmpty()) {
             butPathfindingWasUsed = false;
             app.deleteAllModelsFromModelsToDraw();
-
             int scale;
             if (!inputScale.getText().isEmpty()) {
                 try {
@@ -658,7 +700,6 @@ public class GUI extends javax.swing.JFrame {
                         scale = 10;
                         inputScale.setText("10");
                     }
-
                 } catch (NumberFormatException e) {
                     scale = 30;
                     inputScale.setText("30");
@@ -679,20 +720,18 @@ public class GUI extends javax.swing.JFrame {
                             contoursDistanceLimit = 1;
                             inputContours.setText("1");
                         }
-
                     } catch (NumberFormatException e) {
                         System.out.println("catch");
-                         inputContours.setText("10");
+                        inputContours.setText("10");
                         contoursDistanceLimit = 10;
                     }
                 } else {
                     System.out.println("else");
-                     inputContours.setText("10");
+                    inputContours.setText("10");
                     contoursDistanceLimit = 10;
                 }
-
                 service.inicialisation(contoursDistanceLimit);
-
+                sliderY.setMaximum((int) service.getModelPointCloud().getMaxY()); //potom ošéfovat když bude 0,8 a max bude 1, tak aˇř to nepadá
                 txtTinyCubesNum.setText(Integer.toString(service.getCubes().size()));
                 txtCubesNum.setText(Integer.toString(service.getCubeBlocks().size()));
                 txtCuboidsNum.setText(Integer.toString(service.getCuboidBlocks().size()));
@@ -712,28 +751,52 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_butStartActionPerformed
 
+    private void radCuttingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radCuttingsActionPerformed
+        if (service != null && butStartWasUsed) {
+            updateCutting();
+        }
+    }//GEN-LAST:event_radCuttingsActionPerformed
+
+    private void sliderYMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sliderYMouseDragged
+        if (service != null && butStartWasUsed && radCuttings.isSelected()) {
+            updateCutting();
+        }
+    }//GEN-LAST:event_sliderYMouseDragged
+
+    private void sliderYMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sliderYMousePressed
+        if (service != null && butStartWasUsed && radCuttings.isSelected()) {
+            updateCutting();
+        }
+    }//GEN-LAST:event_sliderYMousePressed
+
+    private void sliderYMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sliderYMouseReleased
+        if (service != null && butStartWasUsed && radCuttings.isSelected()) {
+            updateCutting();
+        }
+    }//GEN-LAST:event_sliderYMouseReleased
+
     private void loadObject(String path) {
         app.deleteAllModelsFromModelsToDraw();
         this.path = path;
-        // service = new Service(path, app);
+    }
 
-//        service.inicialisation();
-//
-//        txtTinyCubesNum.setText(Integer.toString(service.getCubes().size()));
-//        txtCubesNum.setText(Integer.toString(service.getCubeBlocks().size()));
-//        txtCuboidsNum.setText(Integer.toString(service.getCuboidBlocks().size()));
-//        txtOctreeNum.setText(Integer.toString(service.getCubesOctreeBlocks().size()));
-//
-//        txtTinyCubesTime.setText(Long.toString(service.getCubesMaker().getTime()));
-//        txtCubesTime.setText(Long.toString(service.getCubeBlockMaker().getTime() + service.getCubesMaker().getTime()));
-//        txtCuboidsTime.setText(Long.toString(service.getCuboidBlockMaker().getTime() + service.getCubesMaker().getTime()));
-//        txtOctreeTime.setText(Long.toString(service.getCubesOctreeBlockMaker().getTime() + service.getCubesMaker().getTime()));
-//        txtPointsNum.setText(Integer.toString(service.getModelPointCloud().getPointsList().size()));
-//        txtContoursNum.setText(Integer.toString(service.getContourMaker().getAmountOfContours()));
-//        txtContoursTime.setText(Long.toString(service.getContourMaker().getTime()));
-//        radPoints.setSelected(true);
-//        radPathBlocks.setSelected(true);
-//        radPathfinCubes.setSelected(true);
+    private void updateCutting() {
+        Model.doCut = radCuttings.isSelected();
+        Model.cuttingPosition = sliderY.getValue();
+        if (radPoints.isSelected()) {
+            service.invalidateSelectedModel(BlockType.POINTS);
+        } else if (radTinyCubes.isSelected()) {
+            service.invalidateSelectedModel(BlockType.TINY_CUBES);
+        } else if (radContours.isSelected()) {
+            service.invalidateSelectedModel(BlockType.CONTOURS);
+        } else if (radCubes.isSelected()) {
+            service.invalidateSelectedModel(BlockType.CUBES);
+        } else if (radCuboids.isSelected()) {
+            service.invalidateSelectedModel(BlockType.CUBOIDS);
+        } else if (radCubesOctree.isSelected()) {
+            service.invalidateSelectedModel(BlockType.CUBES_OCTREE);
+        }
+
     }
 
 
@@ -754,14 +817,17 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton radContours;
     private javax.swing.JRadioButton radCubes;
     private javax.swing.JRadioButton radCubesOctree;
     private javax.swing.JRadioButton radCuboids;
+    private javax.swing.JRadioButton radCuttings;
     private javax.swing.JRadioButton radPathBlocks;
     private javax.swing.JRadioButton radPathLine;
     private javax.swing.JRadioButton radPathfinCubes;
@@ -769,6 +835,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JRadioButton radPathfinCuboids;
     private javax.swing.JRadioButton radPoints;
     private javax.swing.JRadioButton radTinyCubes;
+    private javax.swing.JSlider sliderY;
     private javax.swing.JLabel txtContoursNum;
     private javax.swing.JLabel txtContoursTime;
     private javax.swing.JLabel txtCubesNum;

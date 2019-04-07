@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.grossmannova.pointcloudvisualiser.models;
+package cz.grossmannova.pointcloudvisualiser.pointcloud;
 
 /**
  *
  * @author Pavla
  */
-public class PointCoordsComparator {
-    
+public enum BlockType {
+     CUBES_OCTREE, CUBES, CUBOIDS, TINY_CUBES, POINTS, CONTOURS;
 }

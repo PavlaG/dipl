@@ -1,14 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.grossmannova.pointcloudvisualiser;
 
 import cz.grossmannova.pointcloudvisualiser.graphics.Camera;
 import cz.grossmannova.pointcloudvisualiser.graphics.RenderManager;
 import cz.grossmannova.pointcloudvisualiser.models.Model;
-import cz.grossmannova.pointcloudvisualiser.pathfinding.Pathfinder;
 import cz.grossmannova.pointcloudvisualiser.ui.GUI;
 import cz.grossmannova.pointcloudvisualiser.utils.LibUtils;
 import java.awt.Canvas;
@@ -34,14 +28,9 @@ public class PointCloudVisualiser {
     private boolean guiRequestedClose = false;
     private long lastFrame;
     private BufferedImage screenshot = null;
-    //private int delta;
     private boolean doScreenshot = false;
-//private boolean randomlySetStartAndFinish=false;
-
-    private Pathfinder pathfinder;
 
     public static void main(String[] args) {
-
         PointCloudVisualiser app = new PointCloudVisualiser();
         app.initLibs();
         app.start();
@@ -84,50 +73,21 @@ public class PointCloudVisualiser {
     }
 
     private void logicInicialization() {
-        // camera = new Camera((noise.getSizeX() + 2) / 2 - 1, (noise.getSizeZ() + 2) / 2 - 1);
-        //camera = new Camera((500 + 2) / 2 - 1, (500 + 2) / 2 - 1);
         camera = new Camera(20, 40);
-
         Keyboard.enableRepeatEvents(true);
     }
 
     private void mainLoop() {
         while (!Display.isCloseRequested() && !guiRequestedClose && !Thread.currentThread().isInterrupted()) {
             long frameTime = getFrameTime();
-            //System.out.println(frameTime);
             camera.input(frameTime);
-//            if (Keyboard.isKeyDown(Keyboard.KEY_Y)) {
-//                ArrayList<Model> arrayList = new ArrayList<>();
-//                arrayList.add(models.get(0));
-//                renderManager.render(camera, arrayList);
-//            }
-//            if (Keyboard.isKeyDown(Keyboard.KEY_X)) {
-//                ArrayList<Model> arrayList = new ArrayList<>();
-//                arrayList.add(models.get(1));
-//                renderManager.render(camera, arrayList);
-//            }
-//            if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
-//                ArrayList<Model> arrayList = new ArrayList<>();
-//                arrayList.add(models.get(2));
-//                renderManager.render(camera, arrayList);
-//            }
-//            if (doScreenshot) {
-//                renderManager.prepareForScreenshot();
-//            } else {
-                renderManager.resize();
-//            }
+            renderManager.resize();
             renderManager.render(camera, new ArrayList<>(models));
             renderManager.testError();
             if (doScreenshot) {
-                //screenshot = renderManager.doScreenshotFHD();
                 screenshot = renderManager.doScreenshot();
                 doScreenshot = false;
             }
-
-//            if (randomlySetStartAndFinish) {
-//                něco udělat
-//                randomlySetStartAndFinish = false;
-//            }
             Display.update();
             Display.sync(60);
         }
@@ -179,13 +139,6 @@ public class PointCloudVisualiser {
         this.doScreenshot = doScreenshot;
     }
 
-//    public boolean isRandomlySetStartAndFinish() {
-//        return randomlySetStartAndFinish;
-//    }
-//    
-//    public void setRandomlySetStartAndFinish(boolean randomlySetStartAndFinish){
-//        this.randomlySetStartAndFinish=randomlySetStartAndFinish;
-//    }
     public BufferedImage getScreenshot() {
         return screenshot;
     }

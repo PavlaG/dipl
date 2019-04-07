@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.grossmannova.pointcloudvisualiser;
 
 import cz.grossmannova.pointcloudvisualiser.io.PointCloudFile;
@@ -20,6 +15,7 @@ import cz.grossmannova.pointcloudvisualiser.pathfinding.Dijkstra;
 import cz.grossmannova.pointcloudvisualiser.pathfinding.Pathfinder;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.BlockMaker;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.BlockMakerType;
+import cz.grossmannova.pointcloudvisualiser.pointcloud.BlockType;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.ContourMaker;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.CubesMaker;
 import cz.grossmannova.pointcloudvisualiser.pointcloud.Point;
@@ -84,24 +80,20 @@ public class Service {
     int pathFound = 0;
 
     public Service(String path, PointCloudVisualiser app, int scale) {
-
-
-   
-   
         this.app = app;
         PointCloudFile file = new PointCloudFileCSV(path);
         modelPointCloud = new ModelPointCloud(file.readPoints(), scale);
         spaceModels = new ArrayList<>();
         pathfindingModels = new ArrayList<>();
+
     }
 
-    public void inicialisation(int contoursDistanceLimit) {//kontury
-
-       
-
+    public void inicialisation(int contoursDistanceLimit) {
+        //kontury
         contourMaker = new ContourMaker(modelPointCloud.pointsList, modelPointCloud.getMaxY(), contoursDistanceLimit);
         ArrayList<ArrayList<ArrayList<Point>>> contours = contourMaker.generate();
         contoursModel = new ContoursModel(contours);
+
         //vnitřní prvotní krychličky
         cubesMaker = new CubesMaker(contours, modelPointCloud.getMaxZ());
         cubes = cubesMaker.generate();
@@ -121,6 +113,7 @@ public class Service {
         cubesOctreeBlockMaker = new BlockMaker(cubes, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ(), BlockMakerType.OCTREE);
         cubesOctreeBlocks = cubesOctreeBlockMaker.generateCubesThroughOctree();
         cubeOctreeBlockCloudModel = new BlockCloudModel(cubesOctreeBlocks);
+
         sendModeltsFromInicialisationToDraw();
         setVisibility(modelPointCloud);
     }
@@ -136,7 +129,6 @@ public class Service {
         for (Model pathfindingModel : pathfindingModels) {
             pathfindingModel.setVisible(false);
         }
-
         start.setVisible(true);
         finish.setVisible(true);
     }
@@ -151,45 +143,9 @@ public class Service {
         for (Model spaceModel : spaceModels) {
             app.sendModelToDraw(spaceModel);
         }
-//        app.sendModelToDraw(cubesCloudModel);
-//        app.sendModelToDraw(cubeBlockCloudModel);
-//        app.sendModelToDraw(cuboidBlockCloudModel);
-//        app.sendModelToDraw(cubeOctreeBlockCloudModel);
     }
 
-    public void graphAndSoOn(List<Block> blocks, boolean showLines) {
-        app.deleteAllPathfindingModelsToDraw(pathfindingModels);
-        pathfindingModels.clear();
-        //vytváření grafu
-
-        Graph graph = new Graph(blocks, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ());
-        graphModel = new GraphModel(graph.getLineGraph());
-
-        pathfinder = new Dijkstra(graph);
-        //pathfinder.randomlySetStartAndFinish();
-        pathfinder.resetStartAndFinish();
-        start = new SphereModel(pathfinder.getStart().getCenter());
-        finish = new SphereModel(pathfinder.getFinish().getCenter());
-        pathfindingResetVisibility();
-        if (pathfinder.findPath()) {
-            System.out.println("nalezeno");
-            graphModelForPath = new GraphModel(pathfinder.getLineGraph());
-            blockModelForPath = new BlockCloudModel(pathfinder.getBlockGraph());
-            pathfindingModels.add(graphModelForPath);
-            pathfindingModels.add(blockModelForPath);
-
-            if (showLines) {
-                graphModelForPath.setVisible(true);
-            } else {
-                blockModelForPath.setVisible(true);
-            }
-        } else {
-            System.out.println("nepodařiloo se najít konec");
-        }
-        sendModelsFromGraph();
-    }
-
-    public int graphAndSoOn2() {
+    public int pathfindingInicialisation() {
         pathFound = 0;
         sameBlock = false;
         app.deleteAllPathfindingModelsToDraw(pathfindingModels);
@@ -220,7 +176,7 @@ public class Service {
             sameBlock = true;
             pathFound = 2;
         }
-//
+
         Graph graphCubesOctree = new Graph(cubesOctreeBlocks, modelPointCloud.getMaxX(), modelPointCloud.getMaxY(), modelPointCloud.getMaxZ());
         graphModelCubesOctree = new GraphModel(graphCubesOctree.getLineGraph());
         pathfinderCubesOctree = new Dijkstra(graphCubesOctree);
@@ -236,8 +192,6 @@ public class Service {
         if (sameBlock == false) {
             if (pathfinderCubes.findPath() == true) {
                 pathFound = 1; //nalezená cesta
-                // if (true == false) {
-                System.out.println("nalezeno");
                 graphModelForPathCubes = new GraphModel(pathfinderCubes.getLineGraph());
                 blockModelForPathCubes = new BlockCloudModel(pathfinderCubes.getBlockGraph());
                 pathfindingModels.add(graphModelForPathCubes);
@@ -248,33 +202,26 @@ public class Service {
                 blockModelForPathCuboids = new BlockCloudModel(pathfinderCuboids.getBlockGraph());
                 pathfindingModels.add(graphModelForPathCuboids);
                 pathfindingModels.add(blockModelForPathCuboids);
-//
+
                 pathfinderCubesOctree.findPath();
                 graphModelForPathCubesOctree = new GraphModel(pathfinderCubesOctree.getLineGraph());
                 blockModelForPathCubesOctree = new BlockCloudModel(pathfinderCubesOctree.getBlockGraph());
                 pathfindingModels.add(graphModelForPathCubesOctree);
                 pathfindingModels.add(blockModelForPathCubesOctree);
 
-            } else {
-                System.out.println("nepodařiloo se najít konec");
             }
-        } else {
-            System.out.println("start a finish leží ve stejném bloku, opakujte hledání");
+//            else {
+//                System.out.println("nepodařiloo se najít konec");
+//            }
         }
-        sendModelsFromGraph2();
-//        Random rand = new Random();
-//        if (rand.nextInt(2) == 1) {
-//            pathFound = false;
-//            System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-//        } else {
-//           //  pathFound = true;
-//            System.out.println("ffffffffffffffffffffffffffffffffffffffffffffff");
+//        else {
+//            System.out.println("start a finish leží ve stejném bloku, opakujte hledání");
 //        }
+        sendModelsFromPathfindingInicialisation();
         return pathFound;
     }
 
-    public void sendModelsFromGraph2() {
-
+    public void sendModelsFromPathfindingInicialisation() {
         pathfindingModels.add(graphModelCubes);
         pathfindingModels.add(graphModelCuboids);
         pathfindingModels.add(graphModelCubesOctree);
@@ -285,18 +232,6 @@ public class Service {
         pathfindingModels.add(startCubesOctree);
         pathfindingModels.add(finishCubesOctree);
 
-        for (Model model : pathfindingModels) {
-            app.sendModelToDraw(model);
-        }
-    }
-
-    public void sendModelsFromGraph() {
-
-        // pathfindingModels.add(graphModelForPath);
-        pathfindingModels.add(graphModel);
-        //graphModel.setVisible(true);
-        pathfindingModels.add(start);
-        pathfindingModels.add(finish);
         for (Model model : pathfindingModels) {
             app.sendModelToDraw(model);
         }
@@ -494,6 +429,22 @@ public class Service {
 
     public int getPathFound() {
         return pathFound;
+    }
+
+    public void invalidateSelectedModel(BlockType blockType) {
+        if (blockType == BlockType.POINTS) {
+            modelPointCloud.invalidateDisplayList();
+        } else if (blockType == BlockType.CONTOURS) {
+            contoursModel.invalidateDisplayList();
+        } else if (blockType == BlockType.TINY_CUBES) {
+            cubesCloudModel.invalidateDisplayList();
+        } else if (blockType == BlockType.CUBES) {
+            cubeBlockCloudModel.invalidateDisplayList();
+        } else if (blockType == BlockType.CUBOIDS) {
+            cuboidBlockCloudModel.invalidateDisplayList();
+        } else if (blockType == BlockType.CUBES_OCTREE) {
+            cubeOctreeBlockCloudModel.invalidateDisplayList();
+        }
     }
 
 }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.grossmannova.pointcloudvisualiser.models;
 
 import cz.grossmannova.pointcloudvisualiser.pathfinding.Edge;
@@ -32,20 +27,13 @@ public class Block {
     private boolean visited = false;
     float finishDistance = -1;
     float startDistance = Integer.MAX_VALUE;
-    Block previousBlock;//= new Block();
+    Block previousBlock;
 
     public Block() {
         innerPoints = new ArrayList<>();
         position = new Vector3f();
         size = new Vector3f();
         setColor();
-    }
-
-    public void resetSomething() {
-        visited = false;
-        finishDistance = -1;
-        startDistance = Integer.MAX_VALUE;
-        previousBlock = null;
     }
 
     public Block(List<Point> innerPoints, int sizeX, int sizeY, int sizeZ, Vector3f position) {
@@ -150,6 +138,13 @@ public class Block {
         }
     }
 
+    public void resetSomeValues() {
+        visited = false;
+        finishDistance = -1;
+        startDistance = Integer.MAX_VALUE;
+        previousBlock = null;
+    }
+
     public Vector3f getSize() {
         return size;
     }
@@ -176,9 +171,7 @@ public class Block {
 
     private void setColor() {
         Random r = new Random();
-
         color.set(r.nextFloat(), r.nextFloat(), r.nextFloat());
-
     }
 
     public Vector3f getColor() {
@@ -195,9 +188,8 @@ public class Block {
     }
 
     public void createCenter() {
-        center = new Point(new Vector3f(this.position.x + (this.size.x - 1) / 2, this.position.y + (this.size.y - 1) / 2, this.position.z + (this.size.z - 1) / 2));
+        center = new Point(new Vector3f(this.position.x + (this.size.x - 1) / 2, this.position.y + (this.size.y - 1) / 2, this.position.z + (this.size.z - 1) / 2), null);
         center.setCorrespondingBlock(this);
-
     }
 
     public Set<Block> getNeighbours() {
@@ -209,8 +201,6 @@ public class Block {
     }
 
     public void addNeighbour(Block neighbour) {
-//       if( neighbours.add(neighbour)){
-//       }
         neighbours.add(neighbour);
     }
 
@@ -295,7 +285,7 @@ public class Block {
         return true;
     }
 
-    public void myString() {
+    public void myString() { //nakonec odstranit
         System.out.println("///////////////");
         System.out.println("position: " + position.toString());
         System.out.println("size: " + size.toString());

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.grossmannova.pointcloudvisualiser.pointcloud;
 
 import java.util.ArrayList;
@@ -11,28 +6,10 @@ import org.lwjgl.util.vector.Vector3f;
  *
  * @author Pavla
  */
-public class MarchingCubes {
-//  typedef struct {
-//   XYZ p[3];
-//} TRIANGLE;
-//
-//typedef struct {
-//   XYZ p[8];
-//   double val[8];
-//} GRIDCELL;
-
-    /*
-   Given a grid cell and an isolevel, calculate the triangular
-   facets required to represent the isosurface through the cell.
-   Return the number of triangular facets, the array "triangles"
-   will be loaded up with the vertices at most 5 triangular facets.
-	0 will be returned if the grid cell is either totally above
-   of totally below the isolevel.
-     */
+public class MarchingCubes { //pak odstranit
 
     public static int polygonise(Point[][][]pointsGrid, int ccX, int ccY, int ccZ,  ArrayList <Vector3f> triangles) {  //cc= current coordinate
-       // System.out.println("aaaaaaaaaa");
-        int i, ntriang;
+       int i, ntriang;
         int cubeindex;
         
 Vector3f[] vertList= new Vector3f[12];

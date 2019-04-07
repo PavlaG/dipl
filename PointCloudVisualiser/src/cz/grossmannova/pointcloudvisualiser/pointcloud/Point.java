@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.grossmannova.pointcloudvisualiser.pointcloud;
 
 import cz.grossmannova.pointcloudvisualiser.models.Block;
@@ -25,10 +20,58 @@ public class Point {
     private Vector3f coords = new Vector3f();
     private boolean exists = true;
     private boolean visited = false;
-    private Block correspondingBlock= new Block();
+    private Block correspondingBlock = new Block();
+    private Vector3f color = new Vector3f(1, 0, 0);
+
+    public Point() {
+    }
+
+    public Point(Vector3f coords, Vector3f color) {
+        this.coords = coords;
+        if (color != null) {
+            this.color = color;
+        }
+       // else this.color= new Vector3f(0,1,0);
+    }
+
+    public Point(Point p) {
+        coords.set(p.getCoords());
+        exists = p.isExists();
+        visited = p.isVisited();
+        color.set(p.getColor());
+    }
+
+    public Point(Point p, int a) {
+        coords.set(p.getCoords());
+        exists = p.isExists();
+        visited = p.isVisited();
+        correspondingBlock = p.getCorrespondingBlock();
+         this.color.set(p.getColor());
+    }
+public Point(float x, float y, float z,Vector3f color) {
+        coords.set(x, y, z);
+        this.color.set(color);
+    }
+
+public Point(float x, float y, float z) {
+        coords.set(x, y, z);
     
+    }
+    public Point(String input) {
+        input = input.substring(2);
+        String[] split = input.split(" ");
+        coords.set(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
+        if (split.length > 3) {
+            //System.out.println("changing colors: " + Float.parseFloat(split[3]) + " " + Float.parseFloat(split[4]) + " " + Float.parseFloat(split[5]));
+                 color.set(Float.parseFloat(split[3]), Float.parseFloat(split[4]), Float.parseFloat(split[5]));
+            // System.out.println("colorsssssssssssss "+color.toString());
+        } else {
+          //  System.out.println("elseeee");
+            color.set(0, 1, 0);
+        }
+    }
+
     
-   
 
     public Block getCorrespondingBlock() {
         return correspondingBlock;
@@ -46,40 +89,13 @@ public class Point {
         this.exists = exists;
     }
 
-    public Point() {
-    }
-
-    public Point(Vector3f coords) {
-        this.coords = coords;
-    }
-
-    public Point(Point p) {
-        coords.set(p.getCoords());
-        exists = p.isExists();
-        visited = p.isVisited();
-    }
-    
-    public Point(Point p, int a) {
-        coords.set(p.getCoords());
-        exists = p.isExists();
-        visited = p.isVisited();
-        correspondingBlock= p.getCorrespondingBlock();
-    }
-
-    public Point(String input) {
-        input=input.substring(2);
-        String[] split = input.split(" ");
-        coords.set(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
-    }
-
-    public Point(float x, float y, float z) {
-        coords.set(x, y, z);
-
-    }
-
     @Override
     public String toString() {
         return "Point{" + "coords=" + coords.toString() + '}';
+    }
+
+    public void colorString() {
+        System.out.println("colors> " + color.toString());
     }
 
     public Vector3f getCoords() {
@@ -122,6 +138,15 @@ public class Point {
         }
         final Point other = (Point) obj;
         return Objects.equals(this.coords, other.coords);
+    }
+
+    public Vector3f getColor() {
+        //System.out.println("returning: " + color.toString());
+        return color;
+    }
+
+    public void setColor(Vector3f color) {
+        this.color = color;
     }
 
 }

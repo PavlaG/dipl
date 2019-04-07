@@ -1,7 +1,6 @@
 package cz.grossmannova.pointcloudvisualiser.pointcloud;
 
 import cz.grossmannova.pointcloudvisualiser.models.Block;
-//import cz.grossmannova.pointcloudvisualiser.utils.PowersOf2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -19,13 +18,13 @@ public class BlockMaker {
     private ArrayList<Block> blocks;
     private boolean[][][] cubesExistance;
     private Point[][][] cubesArray;
-private long time, startTime, endTime;
+    private long time, startTime, endTime;
+
     public BlockMaker(List<Point> cubes, float maxX, float maxY, float maxZ, BlockMakerType type) {
-       this.cubes=new ArrayList<>();
+        this.cubes = new ArrayList<>();
         for (Point cube : cubes) {
-            this.cubes.add(new Point(cube,1));
+            this.cubes.add(new Point(cube, 1));
         }
-//       this.cubes = cubes;
         if (type == BlockMakerType.CUBE_EXPANSION || type == BlockMakerType.CUBOID_EXPANSION) {
             cubesArray = new Point[(int) maxX + 2][(int) maxY + 2][(int) maxZ + 2];
             cubesExistance = new boolean[(int) maxX + 2][(int) maxY + 2][(int) maxZ + 2];
@@ -51,7 +50,7 @@ private long time, startTime, endTime;
     }
 
     public List<Block> generateCubes() {
-        startTime=System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
         blocks = new ArrayList<>();
         for (int y = 0; y <= maxY; y++) {
             for (int x = 0; x <= maxX; x++) {
@@ -62,13 +61,13 @@ private long time, startTime, endTime;
                 }
             }
         }
-        endTime=System.currentTimeMillis();
-        time=endTime-startTime;
+        endTime = System.currentTimeMillis();
+        time = endTime - startTime;
         return blocks;
     }
 
     public List<Block> generateCuboids() {
-         startTime=System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
         blocks = new ArrayList<>();
         for (int y = 0; y <= maxY; y++) {
             for (int x = 0; x <= maxX; x++) {
@@ -79,8 +78,8 @@ private long time, startTime, endTime;
                 }
             }
         }
-        endTime=System.currentTimeMillis();
-        time=endTime-startTime;
+        endTime = System.currentTimeMillis();
+        time = endTime - startTime;
         return blocks;
     }
 
@@ -94,11 +93,10 @@ private long time, startTime, endTime;
         boolean useBuffer = true;
         int max = cubes.size();
         for (int step = 1; step < max; step++) { //původně bylo místo max Integer.maxValue, stejně operuju s tím, že se to nakonec z cyklu breakne
-            //stěna vpravo
+            //face right
             for (int z = (int) point.getCoords().getZ(); z <= (int) point.getCoords().getZ() + step; z++) {
                 for (int y = (int) point.getCoords().getY(); y <= (int) point.getCoords().getY() + step; y++) {
                     Point currentPoint = new Point(point.getCoords().getX() + step, y, z);
-                  //  System.out.println((y) + " compared " + (cubesExistance[(int) point.getCoords().getX() + step].length));
                     if (cubesExistance[(int) point.getCoords().getX() + step][y][z] == true) {
                         cubeBuffer.add(currentPoint);
                     } else {
@@ -111,7 +109,7 @@ private long time, startTime, endTime;
                 }
             }
             if (useBuffer != false) {
-                //stěna vepředu
+                //face front
                 for (int x = (int) point.getCoords().getX(); x < (int) point.getCoords().getX() + step; x++) {
                     for (int y = (int) point.getCoords().getY(); y <= (int) point.getCoords().getY() + step; y++) {
                         Point currentPoint = new Point(x, y, point.getCoords().getZ() + step);
@@ -128,7 +126,7 @@ private long time, startTime, endTime;
                 }
             }
             if (useBuffer != false) {
-                //stěna dole
+                //face bottom
                 for (int x = (int) point.getCoords().getX(); x < (int) point.getCoords().getX() + step; x++) {
                     for (int z = (int) point.getCoords().getZ(); z < (int) point.getCoords().getZ() + step; z++) {
                         Point currentPoint = new Point(x, point.getCoords().getY() + step, z);
@@ -249,11 +247,10 @@ private long time, startTime, endTime;
             cubeBuffer.clear();
         }
         block.createCenter();
-
     }
 
     public List<Block> generateCubesThroughOctree() {
-         startTime=System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
         ArrayList<Point> cubeBuffer = new ArrayList<>();
         boolean somethingIsEmpty = false;
         boolean somethingIsFull = false;
@@ -261,7 +258,7 @@ private long time, startTime, endTime;
         Stack<int[]> stack = new Stack<int[]>();
         int[] indexes = {0, cubesArray.length - 1, 0, cubesArray[1].length - 1, 0, cubesArray[1][1].length - 1};
         stack.add(indexes);
-        int[] i; //= new int[6];
+        int[] i;
         while (!stack.empty()) {
             i = stack.pop();
             for (int y = i[2]; y <= i[3]; y++) {
@@ -269,7 +266,6 @@ private long time, startTime, endTime;
                     for (int z = i[4]; z <= i[5]; z++) {
                         if (!cubesExistance[x][y][z] == true) {
                             somethingIsEmpty = true;
-
                         } else {
                             somethingIsFull = true;
                         }
@@ -319,10 +315,10 @@ private long time, startTime, endTime;
                 somethingIsFull = false;
             }
         }
-         endTime=System.currentTimeMillis();
-        time=endTime-startTime;
+        endTime = System.currentTimeMillis();
+        time = endTime - startTime;
         return blocks;
-    
+
     }
 
     public static int nearestPowOf2(int number) {

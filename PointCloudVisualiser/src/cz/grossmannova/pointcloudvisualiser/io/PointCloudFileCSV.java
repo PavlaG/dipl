@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.grossmannova.pointcloudvisualiser.io;
 
 import cz.grossmannova.pointcloudvisualiser.pointcloud.Point;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +18,7 @@ public class PointCloudFileCSV extends PointCloudFile {
     private FileInputStream fis = null;
     private InputStreamReader isr = null;
     private BufferedReader br = null;
-    private List<Point> list2=new ArrayList<>();
+    private List<Point> list2 = new ArrayList<>();
 
     public PointCloudFileCSV(String pathname) {
         super(pathname);
@@ -64,7 +58,7 @@ public class PointCloudFileCSV extends PointCloudFile {
         if (line == null) {
             return null;
         }
-       
+
         return new Point(line);
     }
 
@@ -79,21 +73,13 @@ public class PointCloudFileCSV extends PointCloudFile {
 
     @Override
     public List<Point> readPoints() {
-        List<Point> list = new ArrayList<>();
-        Point point = null;
-//        while ((point = this.readPoint()) != null) {
-//            list.add(point);
-//        }
-
-while(this.readLine()!=0){
-   // list.add(point);
-}
+        while (this.readLine() != 0) {
+        }
         close();
-       // return list;
-       return list2;
+        return list2;
     }
 
-     public int readLine() {
+    public int readLine() {
         String line = null;
         if (fis == null) {
             try {
@@ -114,13 +100,14 @@ while(this.readLine()!=0){
         if (line == null) {
             return 0;
         }
-        if(line.startsWith("v ")){
-           
+        if (line.startsWith("v ")) {
+
             list2.add(new Point(line));
+            //System.out.println("color::::"+ list2.get(list2.size()-1).getColor().toString());
             return 1;
         }
-       return -1;
-        
+        return -1;
+
     }
-    
+
 }

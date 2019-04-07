@@ -12,17 +12,17 @@ public class ContourMaker {
     private List<Point> pointsList;
     private ArrayList<ArrayList<ArrayList<Point>>> contours = new ArrayList<>(); //seznam seznamu seznamů bodů, které reprezentují několik kontur pro danou hodnotu y
     private final float maxY;
-private long time, startTime, endTime;
-int distanceLimit;
+    private long time, startTime, endTime;
+    int distanceLimit;
+
     public ContourMaker(List<Point> pointsList, float maxY, int distanceLimit) {
         this.pointsList = pointsList;
         this.maxY = maxY;
-        this.distanceLimit=distanceLimit;
+        this.distanceLimit = distanceLimit;
     }
 
     public ArrayList<ArrayList<ArrayList<Point>>> generate() {
-        System.out.println("distance Limit: "+ distanceLimit);
-          startTime=System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
         Point currentPoint;
         float distanceFromCurrentPoint;
         int currentIndexForContourInSpecifiedLevel = -1;
@@ -30,11 +30,9 @@ int distanceLimit;
         Point nearestPointToCurrentPoint = new Point();
         boolean nearestPointSet = false;
         boolean doNextRound = true;
-        //float distanceLimit = 18; //tohle se pak bude někde uživatelsky nastavovat?
         ArrayList<ArrayList<Point>> pointsAccordintToLevels = new ArrayList<>(); //vytvoření hlavního seznamu, který bude obsahovat seznamy bodů pro danou hodnotu y
-        //Point firstPointInContour;
         for (int y = 0; y <= maxY; y++) {
-            pointsAccordintToLevels.add(new ArrayList<>()); //
+            pointsAccordintToLevels.add(new ArrayList<>());
             contours.add(new ArrayList<ArrayList<Point>>());
         }
         for (Point point : pointsList) { //rozdělím body do seznamů podle hodnoty y
@@ -46,9 +44,6 @@ int distanceLimit;
                 System.out.println("level neobsahuje žádné body");
                 continue;
             }
-//            if (pointsAccordintToLevels.indexOf(listForLevel) != 5) {
-//                continue; //podmínka pro testování
-//            }
             currentIndexForContourInSpecifiedLevel = -1;
             while ((currentPoint = thereIsStillUnvisitedPoint(listForLevel)) != null) {
                 contours.get(pointsAccordintToLevels.indexOf(listForLevel)).add(new ArrayList<Point>());
@@ -63,29 +58,22 @@ int distanceLimit;
                         if (i > 2) {
                             if (!point.equals(currentPoint) && (point.isVisited() == false || point.equals(contours.get(pointsAccordintToLevels.indexOf(listForLevel)).get(currentIndexForContourInSpecifiedLevel).get(0)))) {
                                 distanceFromCurrentPoint = countDistanceBetween2PointsIn2D(currentPoint, point);
-                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint && distanceFromCurrentPoint < distanceLimit 
-                                        ) {
-                                    //System.out.println("distance and second limit used");
+                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint && distanceFromCurrentPoint < distanceLimit) {
                                     minDistanceFromCurrentPoint = distanceFromCurrentPoint;
                                     nearestPointToCurrentPoint = point;
                                     nearestPointSet = true;
                                 }
-//                                 if(distanceFromCurrentPoint < distanceLimit ){
-//                                    System.out.println("distanceLimitUsed");
-//                                }
                             }
                         } else if (i <= 2) {
                             if (!point.equals(currentPoint) && point.isVisited() == false) {
                                 distanceFromCurrentPoint = countDistanceBetween2PointsIn2D(currentPoint, point);
-                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint && distanceFromCurrentPoint < distanceLimit
-                                        ) {
+                                if (distanceFromCurrentPoint < minDistanceFromCurrentPoint && distanceFromCurrentPoint < distanceLimit) {
                                     minDistanceFromCurrentPoint = distanceFromCurrentPoint;
                                     nearestPointToCurrentPoint = point;
                                     nearestPointSet = true;
                                 }
                             }
                         }
-
                     }
                     if (nearestPointSet) {
                         i++;
@@ -110,13 +98,11 @@ int distanceLimit;
                         nearestPointToCurrentPoint = new Point();
                     }
                 }
-
             }
-
         }
         closeUnclosedContours();
-        endTime=System.currentTimeMillis();
-        time=endTime-startTime;
+        endTime = System.currentTimeMillis();
+        time = endTime - startTime;
         return contours;
     }
 
@@ -139,21 +125,21 @@ int distanceLimit;
                 if (!contour.get(0).equals(contour.get(contour.size() - 1))) {
                     contour.add(contour.get(0));
                 }
-
             }
         }
     }
-    
-    public int getAmountOfContours(){
-        int amount=0;
-         for (ArrayList<ArrayList<Point>> arrayList : contours) {
+
+    public int getAmountOfContours() {
+        int amount = 0;
+        for (ArrayList<ArrayList<Point>> arrayList : contours) {
             for (ArrayList<Point> contour : arrayList) {
-            amount++;
+                amount++;
             }
-            }
-         return amount;
+        }
+        return amount;
     }
-      public long getTime() {
+
+    public long getTime() {
         return time;
     }
 

@@ -10,28 +10,28 @@ import org.lwjgl.util.vector.Vector3f;
  * @author Pavla
  */
 public class CubesMaker {
-private long time, startTime, endTime;
+
+    private long time, startTime, endTime;
 
     private ArrayList<ArrayList<ArrayList<Point>>> contours;
     private final float maxZ;
-    private int amountOfCubes=0;
-private List<Vector3f> colors= new ArrayList<>();
+    private int amountOfCubes = 0;
+    private List<Vector3f> colors = new ArrayList<>();
+
     public CubesMaker(ArrayList<ArrayList<ArrayList<Point>>> contours, float maxZ) {
         this.contours = contours;
         this.maxZ = maxZ;
     }
 
     public List<Point> generate() {
-        startTime=System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
         List<Point> cubesPoints = new ArrayList<>();
         for (int y = 0; y < contours.size(); y++) {
             ArrayList<ArrayList<Point>> level = contours.get(y);
             for (int z = 0; z < maxZ + 1; z++) {
-                //System.out.println(level);
                 ArrayList<Point> intersections = getIntersections(y, z, level);
-                //System.out.println("y:" + y + " " + "z:" + z + " " + intersections.size());
                 if (intersections.size() % 2 == 1) {
-                    System.err.println("Lichý počet průsečíků:" + y);
+                    //  System.err.println("Lichý počet průsečíků:" + y);
                 }
                 for (int i = 0; i < intersections.size() / 2; i++) {
                     float from = Math.min(intersections.get(i * 2).getCoords().getX(), intersections.get(i * 2 + 1).getCoords().getX());
@@ -43,13 +43,13 @@ private List<Vector3f> colors= new ArrayList<>();
                 }
             }
         }
-        
-        Random r= new Random();      
-        for (Point point : cubesPoints) {           
+
+        Random r = new Random();
+        for (Point point : cubesPoints) {
             colors.add(new Vector3f(r.nextFloat(), r.nextFloat(), r.nextFloat()));
         }
-        endTime=System.currentTimeMillis();
-        time=endTime-startTime;
+        endTime = System.currentTimeMillis();
+        time = endTime - startTime;
         return cubesPoints;
     }
 
@@ -68,7 +68,7 @@ private List<Vector3f> colors= new ArrayList<>();
         }
         return intersections;
     }
-    
+
     private boolean isBetween(float a, float b, int c) {
         return (a <= c && b >= c) || (a >= c && b <= c);
     }
@@ -88,6 +88,5 @@ private List<Vector3f> colors= new ArrayList<>();
     public void setTime(long time) {
         this.time = time;
     }
-    
-    
+
 }

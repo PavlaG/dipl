@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.grossmannova.pointcloudvisualiser.io;
 
 import cz.grossmannova.pointcloudvisualiser.pointcloud.Point;
@@ -14,7 +9,7 @@ import java.util.List;
  *
  * @author Pavla
  */
-public abstract class PointCloudFile extends File{
+public abstract class PointCloudFile extends File {
 
     public PointCloudFile(String pathname) {
         super(pathname);
@@ -31,12 +26,11 @@ public abstract class PointCloudFile extends File{
     public PointCloudFile(URI uri) {
         super(uri);
     }
-    
-    
-    
+
     public abstract Point readPoint();
+
     public abstract List<Point> readPoints();
 
-    public abstract void close() ;
-    
+    public abstract void close();
+
 }

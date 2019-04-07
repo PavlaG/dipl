@@ -33,8 +33,8 @@ import org.lwjgl.util.glu.GLU;
  */
 public class RenderManager {
 
-    //private final int width = 1040;
-    //private final int height = 800;
+    private final int width = 1040;
+    private final int height = 800;
 
     // private float ambientColor[] = {0, 0, 0, 1.0f};
     private int shaderProgram;
@@ -76,8 +76,8 @@ public class RenderManager {
         GLU.gluPerspective(70f, canvas.getWidth() / (float) canvas.getHeight(), 0.1f, canvas.getHeight());
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
-        GL11.glClearColor(0, 0, 0, 0);
-
+       GL11.glClearColor(1, 1, 1, 0);
+//GL11.glClearColor(0,0,0, 0);
         GL11.glClearDepth(1.0f);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
@@ -192,9 +192,12 @@ public class RenderManager {
     
     public void prepareForScreenshot() {
         GL11.glViewport(0, 0, 1920, 1080);
+     //         GL11.glViewport(0, 0, canvas.getWidth(), canvas.getHeight());
+
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
         GLU.gluPerspective(70f, 1920 / (float) 1080, 0.1f, 1080);
+       // GLU.gluPerspective(70f, canvas.getWidth() / (float) canvas.getHeight(), 0.1f, canvas.getHeight());
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
     
@@ -221,12 +224,21 @@ public class RenderManager {
     }
 
     public BufferedImage doScreenshot() {
+        System.out.println("in a");
         ByteBuffer pixels = BufferUtils.createByteBuffer(canvas.getWidth() * canvas.getHeight() * 3);
+        System.out.println("in b " + pixels.toString());
+        System.out.println("canvas width: "+ canvas.getWidth() + "canvas height: "+ canvas.getHeight());
         GL11.glReadPixels(0, 0, canvas.getWidth(), canvas.getHeight(), GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
+        System.out.println("in c ");
         BufferedImage bufImg = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        System.out.println("in d");
         byte[] array = new byte[canvas.getWidth() * canvas.getHeight() * 3];
+        System.out.println("in e");
+        
         pixels.get(array);
+        System.out.println("in f");
         int[] intArray = new int[canvas.getWidth() * canvas.getHeight()];
+        System.out.println("in g");
         int i = 0;
         int j = 0;
         for (int x = 0; x < canvas.getWidth(); x++) {
@@ -237,8 +249,9 @@ public class RenderManager {
             }
 
         }
-        
+        System.out.println("in h");
         bufImg.setRGB(0, 0, canvas.getWidth(), canvas.getHeight(), intArray, 0, canvas.getWidth());
+        System.out.println("in i");
         return bufImg;
     }
 
