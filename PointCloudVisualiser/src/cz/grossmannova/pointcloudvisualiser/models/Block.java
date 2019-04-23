@@ -11,8 +11,10 @@ import java.util.Set;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
- *
- * @author Pavla
+ * Represents a block.
+ * @author Pavla Grossmannová
+ * @version 1.0
+ * @since 1.0
  */
 public class Block {
 

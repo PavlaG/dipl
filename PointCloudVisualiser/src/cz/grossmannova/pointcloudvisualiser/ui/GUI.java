@@ -89,6 +89,8 @@ public class GUI extends javax.swing.JFrame {
         radCuttings = new javax.swing.JRadioButton();
         sliderY = new javax.swing.JSlider();
         jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
 
         fileOpener.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,7 +138,7 @@ public class GUI extends javax.swing.JFrame {
                 radCubesOctreeActionPerformed(evt);
             }
         });
-        jPanel3.add(radCubesOctree, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 380, 155, -1));
+        jPanel3.add(radCubesOctree, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 380, 160, -1));
 
         butGroupProjection.add(radPoints);
         radPoints.setSelected(true);
@@ -239,11 +241,11 @@ public class GUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(radPathfinCubesOctree)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(warningLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE)
+                .addComponent(warningLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 431, -1, -1));
+        jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 450, -1, 220));
 
         butImport.setText("Nahrát body");
         butImport.addActionListener(new java.awt.event.ActionListener() {
@@ -311,10 +313,10 @@ public class GUI extends javax.swing.JFrame {
         jPanel3.add(txtCuboidsNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 340, 70, 21));
 
         txtOctreeNum.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jPanel3.add(txtOctreeNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 380, 70, 21));
+        jPanel3.add(txtOctreeNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 380, 50, 21));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("Čas v ms");
+        jLabel2.setText("Čas generování v ms");
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 150, 97, -1));
 
@@ -398,22 +400,22 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setText("Y");
+        jLabel5.setText("hodnota Y");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(12, Short.MAX_VALUE)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(sliderY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(radCuttings, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(12, Short.MAX_VALUE)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sliderY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -424,10 +426,16 @@ public class GUI extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(sliderY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
-        jPanel3.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 650, 290, 150));
+        jPanel3.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 670, 290, 110));
+
+        jLabel6.setText("Veškeré zobrazené časy mají započítáno rozdělení bodů do úrovní. Krychle, kvádry a");
+        jPanel3.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 410, -1, 10));
+
+        jLabel7.setText("krychle skrz oktálový strom mají započítáno i vytvoření základních krychlí, které využívají.");
+        jPanel3.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 430, -1, -1));
 
         jScrollPane1.setViewportView(jPanel3);
 
@@ -737,10 +745,10 @@ public class GUI extends javax.swing.JFrame {
                 txtCuboidsNum.setText(Integer.toString(service.getCuboidBlocks().size()));
                 txtOctreeNum.setText(Integer.toString(service.getCubesOctreeBlocks().size()));
 
-                txtTinyCubesTime.setText(Long.toString(service.getCubesMaker().getTime()));
-                txtCubesTime.setText(Long.toString(service.getCubeBlockMaker().getTime() + service.getCubesMaker().getTime()));
-                txtCuboidsTime.setText(Long.toString(service.getCuboidBlockMaker().getTime() + service.getCubesMaker().getTime()));
-                txtOctreeTime.setText(Long.toString(service.getCubesOctreeBlockMaker().getTime() + service.getCubesMaker().getTime()));
+                txtTinyCubesTime.setText(Long.toString(service.getContourMaker().getTimeForList()+service.getCubesMaker().getTime()));
+                txtCubesTime.setText(Long.toString(service.getContourMaker().getTimeForList()+service.getCubeBlockMaker().getTime() + service.getCubesMaker().getTime()));
+                txtCuboidsTime.setText(Long.toString(service.getContourMaker().getTimeForList()+service.getCuboidBlockMaker().getTime() + service.getCubesMaker().getTime()));
+                txtOctreeTime.setText(Long.toString(service.getContourMaker().getTimeForList()+service.getCubesOctreeBlockMaker().getTime() + service.getCubesMaker().getTime()));
                 txtPointsNum.setText(Integer.toString(service.getModelPointCloud().getPointsList().size()));
                 txtContoursNum.setText(Integer.toString(service.getContourMaker().getAmountOfContours()));
                 txtContoursTime.setText(Long.toString(service.getContourMaker().getTime()));
@@ -818,6 +826,8 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

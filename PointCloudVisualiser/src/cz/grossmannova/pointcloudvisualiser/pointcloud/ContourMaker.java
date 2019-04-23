@@ -12,7 +12,7 @@ public class ContourMaker {
     private List<Point> pointsList;
     private ArrayList<ArrayList<ArrayList<Point>>> contours = new ArrayList<>(); //seznam seznamu seznamů bodů, které reprezentují několik kontur pro danou hodnotu y
     private final float maxY;
-    private long time, startTime, endTime;
+    private long time, startTime, endTime, timeForList, startTimeList, endTimeList;
     int distanceLimit;
 
     public ContourMaker(List<Point> pointsList, float maxY, int distanceLimit) {
@@ -30,6 +30,7 @@ public class ContourMaker {
         Point nearestPointToCurrentPoint = new Point();
         boolean nearestPointSet = false;
         boolean doNextRound = true;
+        startTimeList = System.currentTimeMillis();
         ArrayList<ArrayList<Point>> pointsAccordintToLevels = new ArrayList<>(); //vytvoření hlavního seznamu, který bude obsahovat seznamy bodů pro danou hodnotu y
         for (int y = 0; y <= maxY; y++) {
             pointsAccordintToLevels.add(new ArrayList<>());
@@ -38,6 +39,8 @@ public class ContourMaker {
         for (Point point : pointsList) { //rozdělím body do seznamů podle hodnoty y
             pointsAccordintToLevels.get((int) point.getCoords().getY()).add(point);
         }
+        endTimeList = System.currentTimeMillis();
+        timeForList = endTimeList - startTimeList;
 
         for (ArrayList<Point> listForLevel : pointsAccordintToLevels) { //prvotní cyklus přes všechny levely
             if (listForLevel.isEmpty()) { //ověřit, že to pak nidke nespadne, když level opravdu nebude nic obsahovat!!!
@@ -146,4 +149,10 @@ public class ContourMaker {
     public void setTime(long time) {
         this.time = time;
     }
+
+    public long getTimeForList() {
+        return timeForList;
+    }
+    
+    
 }
